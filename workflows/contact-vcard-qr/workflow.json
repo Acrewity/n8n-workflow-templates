@@ -1,0 +1,114 @@
+{
+  "name": "Contact vCard QR Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "contact-qr",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "g1b2c3d4-0007-0001-0001-000000000001",
+      "name": "Webhook - Contact Info",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "contact-qr-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "const c = $input.first().json.body || $input.first().json;\nconst vcard = `BEGIN:VCARD\nVERSION:3.0\nN:${c.lastName || \"\"};${c.firstName || \"\"}\nFN:${c.firstName || \"\"} ${c.lastName || \"\"}\nORG:${c.company || \"\"}\nTITLE:${c.title || \"\"}\nTEL;TYPE=WORK,VOICE:${c.phone || \"\"}\nEMAIL:${c.email || \"\"}\nURL:${c.website || \"\"}\nEND:VCARD`;\nreturn [{ json: { vcard, contact: c } }];"
+      },
+      "id": "g1b2c3d4-0007-0001-0001-000000000002",
+      "name": "Build vCard",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "qr_code_generator",
+        "operation": "generate",
+        "text": "={{ $json.vcard }}",
+        "format": "png",
+        "size": 400
+      },
+      "id": "g1b2c3d4-0007-0001-0001-000000000003",
+      "name": "Generate QR Code",
+      "type": "@acrewity/n8n-nodes-acrewity.acrewity",
+      "typeVersion": 1,
+      "position": [
+        440,
+        300
+      ],
+      "credentials": {
+        "acrewityApi": {
+          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
+          "name": "Acrewity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, contact: $node[\"Build vCard\"].json.contact, qrCode: $json.result.base64 || $json.result.image }) }}",
+        "options": {}
+      },
+      "id": "g1b2c3d4-0007-0001-0001-000000000004",
+      "name": "Return QR Code",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook - Contact Info": {
+      "main": [
+        [
+          {
+            "node": "Build vCard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build vCard": {
+      "main": [
+        [
+          {
+            "node": "Generate QR Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate QR Code": {
+      "main": [
+        [
+          {
+            "node": "Return QR Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "pinData": {}
+}

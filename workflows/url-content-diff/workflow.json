@@ -1,0 +1,191 @@
+{
+  "name": "Acrewity - URL Content Diff",
+  "nodes": [
+    {
+      "id": "a5000001-0001-0001-0001-000000000001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "url-diff",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "url-diff-webhook-005"
+    },
+    {
+      "id": "a5000001-0001-0001-0001-000000000002",
+      "name": "Fetch URL 1",
+      "type": "@acrewity/n8n-nodes-acrewity.acrewity",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "resource": "url_to_markdown",
+        "operation": "url_to_markdown",
+        "url": "={{ $json.body.url1 }}"
+      },
+      "credentials": {
+        "acrewityApi": {
+          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
+          "name": "Acrewity account"
+        }
+      }
+    },
+    {
+      "id": "a5000001-0001-0001-0001-000000000003",
+      "name": "Fetch URL 2",
+      "type": "@acrewity/n8n-nodes-acrewity.acrewity",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "resource": "url_to_markdown",
+        "operation": "url_to_markdown",
+        "url": "={{ $('Webhook').first().json.body.url2 }}"
+      },
+      "credentials": {
+        "acrewityApi": {
+          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
+          "name": "Acrewity account"
+        }
+      }
+    },
+    {
+      "id": "a5000001-0001-0001-0001-000000000004",
+      "name": "Prepare Texts",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "text1",
+              "value": "={{ $('Fetch URL 1').first().json.result.markdown }}",
+              "type": "string"
+            },
+            {
+              "name": "text2",
+              "value": "={{ $json.result.markdown }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "a5000001-0001-0001-0001-000000000005",
+      "name": "Compare Content",
+      "type": "@acrewity/n8n-nodes-acrewity.acrewity",
+      "typeVersion": 1,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "resource": "text_diff",
+        "operation": "diff",
+        "text1": "={{ $json.text1 }}",
+        "text2": "={{ $json.text2 }}"
+      },
+      "credentials": {
+        "acrewityApi": {
+          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
+          "name": "Acrewity account"
+        }
+      }
+    },
+    {
+      "id": "a5000001-0001-0001-0001-000000000006",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ url1: $('Webhook').first().json.body.url1, url2: $('Webhook').first().json.body.url2, diff: $json, success: true }) }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Fetch URL 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch URL 1": {
+      "main": [
+        [
+          {
+            "node": "Fetch URL 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch URL 2": {
+      "main": [
+        [
+          {
+            "node": "Prepare Texts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Texts": {
+      "main": [
+        [
+          {
+            "node": "Compare Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compare Content": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "pinData": {}
+}

@@ -1,0 +1,113 @@
+{
+  "name": "Acrewity - Invoice PDF Generator",
+  "nodes": [
+    {
+      "id": "a3000001-0001-0001-0001-000000000001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate-invoice",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "generate-invoice-webhook-003"
+    },
+    {
+      "id": "a3000001-0001-0001-0001-000000000002",
+      "name": "Build Invoice HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const b = $input.first().json.body;\nconst items = b.items || [{ name: 'Consulting Service', qty: 1, price: 500 }];\nconst tax = b.tax_rate || 0.10;\nconst currency = b.currency || 'USD';\nconst subtotal = items.reduce((s, i) => s + (i.qty * i.price), 0);\nconst taxAmt = subtotal * tax;\nconst total = subtotal + taxAmt;\nconst fmt = n => `${currency} ${n.toFixed(2)}`;\nconst rows = items.map(i => `<tr><td>${i.name}</td><td style=\"text-align:center\">${i.qty}</td><td style=\"text-align:right\">${fmt(i.price)}</td><td style=\"text-align:right\">${fmt(i.qty * i.price)}</td></tr>`).join('');\nconst html = `<!DOCTYPE html><html><head><meta charset=\"utf-8\"><style>body{font-family:Arial,sans-serif;padding:40px;color:#333;max-width:800px;margin:0 auto}h1{color:#2563eb;font-size:28px;margin:0}.header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:40px}.company{font-size:12px;color:#666;margin-top:8px}.invoice-meta{text-align:right;font-size:14px}table{width:100%;border-collapse:collapse;margin:20px 0}th{background:#2563eb;color:white;padding:12px;text-align:left;font-size:13px}td{padding:10px 12px;border-bottom:1px solid #e5e7eb;font-size:13px}.totals{margin-left:auto;width:280px;font-size:14px}.totals td{padding:6px 12px;border:none}.totals .total-row{font-size:16px;font-weight:bold;color:#059669;border-top:2px solid #059669}.footer{margin-top:40px;font-size:12px;color:#9ca3af;border-top:1px solid #e5e7eb;padding-top:16px}</style></head><body><div class=\"header\"><div><h1>INVOICE</h1><div class=\"company\">Acrewity Inc. &bull; api.acrewity.com</div></div><div class=\"invoice-meta\"><div><strong>Invoice #:</strong> ${b.invoice_number || 'INV-001'}</div><div><strong>Date:</strong> ${b.date || new Date().toISOString().split('T')[0]}</div><div><strong>Due:</strong> ${b.due_date || 'On Receipt'}</div></div></div><div style=\"margin-bottom:24px\"><strong>Bill To:</strong><br>${b.customer_name || 'Customer Name'}<br>${b.customer_email || ''}</div><table><thead><tr><th>Description</th><th style=\"text-align:center\">Qty</th><th style=\"text-align:right\">Unit Price</th><th style=\"text-align:right\">Total</th></tr></thead><tbody>${rows}</tbody></table><table class=\"totals\"><tr><td>Subtotal</td><td style=\"text-align:right\">${fmt(subtotal)}</td></tr><tr><td>Tax (${(tax*100).toFixed(0)}%)</td><td style=\"text-align:right\">${fmt(taxAmt)}</td></tr><tr class=\"total-row\"><td>Total</td><td style=\"text-align:right\">${fmt(total)}</td></tr></table>${b.notes ? `<div style=\"margin-top:24px;font-size:13px\"><strong>Notes:</strong> ${b.notes}</div>` : ''}<div class=\"footer\">Thank you for your business &bull; Powered by Acrewity API</div></body></html>`;\nreturn [{ json: { html, total, invoice_number: b.invoice_number || 'INV-001' } }];"
+      }
+    },
+    {
+      "id": "a3000001-0001-0001-0001-000000000003",
+      "name": "Convert to PDF",
+      "type": "@acrewity/n8n-nodes-acrewity.acrewity",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "resource": "html_to_pdf",
+        "operation": "convert_pdf",
+        "html": "={{ $json.html }}",
+        "format": "A4"
+      },
+      "credentials": {
+        "acrewityApi": {
+          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
+          "name": "Acrewity account"
+        }
+      }
+    },
+    {
+      "id": "a3000001-0001-0001-0001-000000000004",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Build Invoice HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Invoice HTML": {
+      "main": [
+        [
+          {
+            "node": "Convert to PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to PDF": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "pinData": {}
+}

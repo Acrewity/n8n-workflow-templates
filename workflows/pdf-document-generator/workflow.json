@@ -1,0 +1,188 @@
+{
+  "name": "PDF Document Generator (Invoice, Quote, Receipt)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## PDF Document Generator\n\n### Who is this for?\nBusinesses and freelancers who need to generate professional PDF documents (invoices, quotes, receipts, estimates) from order/sales data.\n\n### Supported Document Types\n- **invoice** - Standard invoice with due date\n- **quote** - Quote/proposal with validity period\n- **estimate** - Cost estimate with validity period\n- **receipt** - Payment receipt with payment method\n- **proforma** - Proforma invoice with due date\n\n### What it does\n1. Receives order data via webhook\n2. Builds styled HTML based on document type\n3. Converts HTML to PDF using Acrewity\n4. Returns the PDF as base64 in the response\n\n### Setup\n1. Configure your Acrewity API credentials (can use free account - acrewity.com)\n2. Activate the workflow\n3. POST order data to the webhook URL (or use mock data to test)\n\n ### Sample POST body\n```json\n{\n  \"documentType\": \"invoice\",\n  \"company\": \"Acme Electronics\",\n  \"logoUrl\": \"https://example.com/logo.png\",\n  \"documentNumber\": \"INV-2024-001\",\n  \"customerName\": \"John Smith\",\n  \"customerEmail\": \"john@example.com\",\n  \"customerAddress\": \"123 Main St\",\n  \"dueDate\": \"2024-02-15\",\n  \"taxRate\": 0.13,\n  \"notes\": \"Thank you!\",\n  \"items\": [\n    {\"name\": \"Widget\", \"quantity\": 10, \"price\": 5.99}\n  ]\n}\n```\n\n### Notes\n- taxRate is optional (0.13 = 13%, omit for no tax)\n- logoUrl is optional (displays in header)\n- Uses the Acrewity community node",
+        "height": 1063,
+        "width": 516,
+        "color": 4
+      },
+      "id": "ff02bb6c-0ea7-4d46-a40e-87cb44284f34",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "content": "**1. Receive Order**\nPOST endpoint accepts JSON with documentType, company, customer info, and items array.",
+        "height": 128,
+        "width": 200
+      },
+      "id": "968ee163-118b-4f83-8e84-ff352404ba9c",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        320,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "content": "**2. Build HTML**\nGenerates styled document based on type. Calculates subtotal, tax (if provided), and total.",
+        "height": 128,
+        "width": 200
+      },
+      "id": "37cb5c63-3d33-4e6f-a515-a31923f71e24",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        544,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "content": "**3. Convert to PDF**\nUses Acrewity API to render HTML as PDF document.",
+        "height": 128,
+        "width": 200
+      },
+      "id": "bf270c81-1d61-4e6c-ba5a-0227329a8a74",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        768,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "content": "**4. Return Response**\nSends back JSON with base64 PDF and filename.",
+        "height": 128,
+        "width": 200
+      },
+      "id": "2494c676-e836-422d-92be-5d5491ff11f1",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        992,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// HTML ESCAPE HELPER (XSS Protection)\n// ============================================\nconst esc = (s = '') => String(s)\n  .replaceAll('&', '&amp;')\n  .replaceAll('<', '&lt;')\n  .replaceAll('>', '&gt;')\n  .replaceAll('\"', '&quot;')\n  .replaceAll(\"'\", '&#39;');\n\n// ============================================\n// GET THE ORDER DATA\n// ============================================\nconst order = $input.first().json.body || $input.first().json;\nconst items = order.items || [];\n\n// ============================================\n// TAX SETTINGS\n// Pass taxRate in payload (0.13 = 13%) or defaults to 0\n// ============================================\nconst TAX_RATE = order.taxRate ?? 0;\n\n// ============================================\n// DOCUMENT TYPE SETTINGS\n// Options: invoice, quote, receipt, estimate, proforma\n// ============================================\nconst docType = (order.documentType || 'invoice').toLowerCase();\n\nconst typeSettings = {\n  invoice: {\n    title: 'INVOICE',\n    numberLabel: 'Invoice #',\n    numberPrefix: 'INV-',\n    customerLabel: 'Bill To',\n    showDueDate: true,\n    showPaymentMethod: false,\n    showValidUntil: false\n  },\n  quote: {\n    title: 'QUOTE',\n    numberLabel: 'Quote #',\n    numberPrefix: 'QTE-',\n    customerLabel: 'Quote For',\n    showDueDate: false,\n    showPaymentMethod: false,\n    showValidUntil: true\n  },\n  estimate: {\n    title: 'ESTIMATE',\n    numberLabel: 'Estimate #',\n    numberPrefix: 'EST-',\n    customerLabel: 'Prepared For',\n    showDueDate: false,\n    showPaymentMethod: false,\n    showValidUntil: true\n  },\n  receipt: {\n    title: 'RECEIPT',\n    numberLabel: 'Receipt #',\n    numberPrefix: 'REC-',\n    customerLabel: 'Received From',\n    showDueDate: false,\n    showPaymentMethod: true,\n    showValidUntil: false\n  },\n  proforma: {\n    title: 'PROFORMA INVOICE',\n    numberLabel: 'Proforma #',\n    numberPrefix: 'PRO-',\n    customerLabel: 'Bill To',\n    showDueDate: true,\n    showPaymentMethod: false,\n    showValidUntil: false\n  }\n};\n\n// Use invoice as fallback if unknown type\nconst settings = typeSettings[docType] || typeSettings.invoice;\n\n// ============================================\n// BUILD THE ITEMS TABLE ROWS\n// ============================================\nlet itemsHtml = '';\nlet subtotal = 0;\n\nfor (const item of items) {\n  const lineTotal = item.quantity * item.price;\n  subtotal += lineTotal;\n  \n  itemsHtml += '<tr>';\n  itemsHtml += '<td>' + esc(item.name) + '</td>';\n  itemsHtml += '<td>' + esc(item.quantity) + '</td>';\n  itemsHtml += '<td>$' + item.price.toFixed(2) + '</td>';\n  itemsHtml += '<td>$' + lineTotal.toFixed(2) + '</td>';\n  itemsHtml += '</tr>';\n}\n\n// ============================================\n// CALCULATE TOTALS\n// ============================================\nconst tax = subtotal * TAX_RATE;\nconst total = subtotal + tax;\n\n// ============================================\n// SET DEFAULT VALUES (all escaped)\n// ============================================\nconst company = esc(order.company || 'Your Company');\nconst docNumber = esc(order.documentNumber || order.invoiceNumber || settings.numberPrefix + Date.now());\nconst docDate = new Date().toLocaleDateString();\nconst customerName = esc(order.customerName || 'Customer');\nconst customerEmail = esc(order.customerEmail || '');\nconst customerAddress = esc(order.customerAddress || '');\nconst dueDate = esc(order.dueDate || '');\nconst validUntil = esc(order.validUntil || '');\nconst paymentMethod = esc(order.paymentMethod || '');\nconst notes = esc(order.notes || '');\nconst logoUrl = order.logoUrl || '';\n\n// ============================================\n// BUILD OPTIONAL FIELDS\n// ============================================\nlet logoHtml = '';\nif (logoUrl) {\n  logoHtml = '<img src=\"' + esc(logoUrl) + '\" style=\"max-height: 60px; max-width: 200px;\" alt=\"Logo\">';\n}\n\nlet optionalFields = '';\n\nif (settings.showDueDate && dueDate) {\n  optionalFields += '<p><strong>Due Date:</strong> ' + dueDate + '</p>';\n}\n\nif (settings.showValidUntil && validUntil) {\n  optionalFields += '<p><strong>Valid Until:</strong> ' + validUntil + '</p>';\n}\n\nif (settings.showPaymentMethod && paymentMethod) {\n  optionalFields += '<p><strong>Payment Method:</strong> ' + paymentMethod + '</p>';\n}\n\nlet notesHtml = '';\nif (notes) {\n  notesHtml = '<div class=\"notes\"><strong>Notes:</strong><br>' + notes + '</div>';\n}\n\nlet addressHtml = '';\nif (customerAddress) {\n  addressHtml = '<p><strong>Address:</strong> ' + customerAddress + '</p>';\n}\n\n// Tax row only if tax rate > 0\nlet taxHtml = '';\nif (TAX_RATE > 0) {\n  taxHtml = '<p class=\"right\">Tax (' + (TAX_RATE * 100) + '%): $' + tax.toFixed(2) + '</p>';\n}\n\n// ============================================\n// BUILD THE HTML\n// ============================================\nconst html = `\n<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    body { font-family: Arial; padding: 40px; }\n    .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }\n    .company-info h1 { color: #333; margin: 0 0 5px 0; }\n    .company-info h2 { color: #666; margin: 0; }\n    table { width: 100%; border-collapse: collapse; margin: 20px 0; }\n    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ccc; }\n    th { background: #f0f0f0; }\n    .right { text-align: right; }\n    .bold { font-weight: bold; font-size: 18px; }\n    .notes { margin-top: 30px; padding: 15px; background: #f9f9f9; border-left: 3px solid #ccc; }\n  </style>\n</head>\n<body>\n\n  <div class=\"header\">\n    <div class=\"company-info\">\n      <h1>${company}</h1>\n      <h2>${settings.title}</h2>\n    </div>\n    ${logoHtml}\n  </div>\n  \n  <p><strong>${settings.numberLabel}:</strong> ${docNumber}</p>\n  <p><strong>Date:</strong> ${docDate}</p>\n  ${optionalFields}\n  <p><strong>${settings.customerLabel}:</strong> ${customerName}</p>\n  ${addressHtml}\n  <p><strong>Email:</strong> ${customerEmail}</p>\n\n  <table>\n    <tr>\n      <th>Item</th>\n      <th>Qty</th>\n      <th>Price</th>\n      <th>Total</th>\n    </tr>\n    ${itemsHtml}\n  </table>\n\n  <p class=\"right\">Subtotal: $${subtotal.toFixed(2)}</p>\n  ${taxHtml}\n  <p class=\"right bold\">Total: $${total.toFixed(2)}</p>\n\n  ${notesHtml}\n\n</body>\n</html>\n`;\n\n// ============================================\n// RETURN THE RESULT\n// ============================================\nreturn [{ \n  json: { \n    html: html, \n    documentNumber: order.documentNumber || order.invoiceNumber || settings.numberPrefix + Date.now(),\n    documentType: docType,\n    customerEmail: order.customerEmail || '' \n  } \n}];"
+      },
+      "id": "4a7da5ac-109d-413c-bec8-ce743636b07f",
+      "name": "Build Document HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        544,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, pdf: $json.result.base64, filename: $node[\"Build Document HTML\"].json.documentNumber + \".pdf\", documentType: $node[\"Build Document HTML\"].json.documentType } }}",
+        "options": {}
+      },
+      "id": "433e41ef-6374-4434-aa02-f74d0ded9b7b",
+      "name": "Return PDF Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        992,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "html_to_pdf",
+        "html": "={{ $json.html }}"
+      },
+      "id": "dca4417a-d4be-4437-9ba0-129e171c2fb0",
+      "name": "Convert to PDF",
+      "type": "@acrewity/n8n-nodes-acrewity.acrewity",
+      "typeVersion": 1,
+      "position": [
+        768,
+        432
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "acrewityApi": {
+          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
+          "name": "Acrewity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate-document",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "0f3b8ecc-958a-43e2-a6cb-505ecf05ff21",
+      "name": "Webhook - Order Data",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        320,
+        432
+      ],
+      "webhookId": "pdf-document-webhook"
+    }
+  ],
+  "connections": {
+    "Build Document HTML": {
+      "main": [
+        [
+          {
+            "node": "Convert to PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to PDF": {
+      "main": [
+        [
+          {
+            "node": "Return PDF Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Order Data": {
+      "main": [
+        [
+          {
+            "node": "Build Document HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "pinData": {}
+}

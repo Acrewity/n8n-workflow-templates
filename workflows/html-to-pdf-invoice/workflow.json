@@ -1,0 +1,83 @@
+{
+  "name": "Acrewity Demo - HTML to PDF Invoice",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "trigger-1",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "html",
+              "value": "<html><head><style>body{font-family:Arial;padding:40px}h1{color:#2563eb}table{width:100%;border-collapse:collapse;margin:20px 0}th,td{border:1px solid #ddd;padding:12px;text-align:left}th{background:#f3f4f6}.total{font-size:1.2em;font-weight:bold;color:#059669}</style></head><body><h1>INVOICE #INV-2024-001</h1><p><strong>Bill To:</strong> Acme Corp</p><p><strong>Date:</strong> December 23, 2024</p><table><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr><tr><td>Widget Pro</td><td>5</td><td>$29.99</td><td>$149.95</td></tr><tr><td>Gadget Plus</td><td>2</td><td>$49.99</td><td>$99.98</td></tr><tr><td>Service Fee</td><td>1</td><td>$25.00</td><td>$25.00</td></tr></table><p class=\"total\">Total: $274.93</p></body></html>",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "id": "set-1",
+      "name": "Invoice HTML"
+    },
+    {
+      "parameters": {
+        "resource": "html_to_pdf",
+        "operation": "convert_pdf",
+        "html": "={{ $json.html }}",
+        "format": "A4"
+      },
+      "type": "@acrewity/n8n-nodes-acrewity.acrewityTool",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "id": "acrewity-1",
+      "name": "Generate PDF"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Invoice HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Invoice HTML": {
+      "main": [
+        [
+          {
+            "node": "Generate PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "pinData": {}
+}
