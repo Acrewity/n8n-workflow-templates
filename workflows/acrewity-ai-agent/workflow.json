@@ -1,713 +1,546 @@
 {
-  "settings": {
-    "executionOrder": "v1",
-    "callerPolicy": "workflowsFromSameOwner",
-    "availableInMCP": false
-  },
-  "connections": {
-    "Webhook": {
-      "main": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "AI Agent": {
-      "main": [
-        [
-          {
-            "node": "Respond",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Claude Sonnet 4.6": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "generate_uuid": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "generate_qr_code": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "generate_barcode": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "match_regex": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "compare_texts": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "encode_url": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "decode_url": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "convert_timezone": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "generate_markdown_table": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "validate_json_schema": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "fetch_url_as_markdown": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "convert_html_to_pdf": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "convert_html_to_markdown": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "convert_markdown_to_html": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "convert_image": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "json_to_excel": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "extract_links": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "generate_sitemap": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    }
-  },
+  "name": "Acrewity AI Agent",
+  "settings": {"executionOrder": "v1"},
   "pinData": {},
   "nodes": [
     {
-      "webhookId": "acrewity-agent-webhook-001",
-      "position": [
-        0,
-        0
-      ],
       "id": "aia-0005-0001-0001-0001-000000000001",
       "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
+      "position": [0, 0],
+      "webhookId": "acrewity-agent-webhook-001",
       "parameters": {
-        "options": {},
+        "httpMethod": "POST",
         "path": "acrewity-agent",
         "responseMode": "responseNode",
-        "httpMethod": "POST"
-      },
-      "type": "n8n-nodes-base.webhook"
+        "options": {}
+      }
     },
     {
-      "position": [
-        300,
-        0
-      ],
       "id": "aia-0005-0001-0001-0001-000000000002",
       "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.9,
+      "position": [300, 0],
       "parameters": {
+        "promptType": "define",
         "text": "={{ $json.body.message }}",
         "options": {
-          "systemMessage": "You are an Acrewity AI Agent with 18 utility tools. Always call a tool to fulfill requests - never just describe what you would do.\\n\\nTools:\\n- generate_uuid: generate UUIDs (params: version=v4/v1, count)\\n- generate_qr_code: QR code image from text/URL (params: text, format=png/svg, size)\\n- generate_barcode: barcode from text/numbers (params: text)\\n- match_regex: regex pattern matching (params: text, pattern, flags)\\n- compare_texts: line-by-line text diff (params: text1, text2, format)\\n- encode_url: URL-encode a string (params: text)\\n- decode_url: URL-decode a string (params: text)\\n- convert_timezone: convert datetime between timezones (params: datetime, fromTimezone, toTimezone)\\n- generate_markdown_table: Markdown table from data (params: headers, rows)\\n- validate_json_schema: validate JSON against schema (params: data, schema)\\n- fetch_url_as_markdown: fetch webpage as Markdown (params: url)\\n- convert_html_to_pdf: HTML string to PDF (params: html - write complete styled HTML with inline CSS)\\n- convert_html_to_markdown: HTML to Markdown (params: content, preserve_tables)\\n- convert_markdown_to_html: Markdown to HTML (params: content, include_styles, highlight_code)\\n- convert_image: convert image format (params: imageUrl, format=jpeg/png/webp, quality)\\n- json_to_excel: JSON array to Excel (params: data, sheetName)\\n- extract_links: extract all links from a webpage (params: url)\\n- generate_sitemap: crawl site and generate XML sitemap (params: url)"
-        },
-        "promptType": "define"
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent"
+          "systemMessage": "You are an Acrewity AI Agent with 18 utility tools. Always call a tool to fulfill requests.\n\nTools available:\n- generate_uuid: generate UUIDs (count, version v1/v4)\n- generate_qr_code: QR code from text/URL (text, format, size)\n- generate_barcode: 1D barcode from text (text)\n- match_regex: regex pattern matching (text, pattern, flags)\n- compare_texts: line-by-line diff (text1, text2, format)\n- encode_url: URL-encode a string (text)\n- decode_url: URL-decode a string (text)\n- convert_timezone: convert datetime between timezones (datetime, fromTimezone, toTimezone)\n- generate_markdown_table: Markdown table from data (headers, rows)\n- validate_json_schema: validate JSON against schema (data, schema)\n- fetch_url_as_markdown: fetch webpage as Markdown (url)\n- convert_html_to_pdf: HTML to PDF - write complete styled HTML with inline CSS (html)\n- convert_html_to_markdown: HTML to Markdown (content, preserve_tables)\n- convert_markdown_to_html: Markdown to HTML (content, include_styles, highlight_code)\n- convert_image: convert image format via public URL (imageUrl, format, quality)\n- json_to_excel: JSON array of objects to Excel (data, sheetName)\n- extract_links: extract all links from a webpage (url)\n- generate_sitemap: crawl site and generate XML sitemap (url)"
+        }
+      }
     },
     {
-      "position": [
-        100,
-        300
-      ],
       "id": "aia-0005-0001-0001-0001-000000000003",
       "name": "Claude Sonnet 4.6",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
       "typeVersion": 1.3,
-      "credentials": {
-        "anthropicApi": {
-          "id": "EsTNHopUwSt2Yw84",
-          "name": "Anthropic account"
-        }
-      },
+      "position": [100, 300],
       "parameters": {
-        "model": {
-          "__rl": true,
-          "value": "claude-sonnet-4-6",
-          "cachedResultName": "Claude Sonnet 4.6",
-          "mode": "list"
-        },
+        "model": {"__rl": true, "mode": "list", "value": "claude-sonnet-4-6", "cachedResultName": "Claude Sonnet 4.6"},
         "options": {}
       },
-      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic"
+      "credentials": {"anthropicApi": {"id": "EsTNHopUwSt2Yw84", "name": "Anthropic account"}}
     },
     {
-      "position": [
-        600,
-        0
-      ],
       "id": "aia-0005-0001-0001-0001-000000000011",
       "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
+      "position": [600, 0],
       "parameters": {
-        "options": {},
         "respondWith": "json",
-        "responseBody": "={{ JSON.stringify({ success: true, response: $json.output }) }}"
-      },
-      "type": "n8n-nodes-base.respondToWebhook"
+        "responseBody": "={{ JSON.stringify({ success: true, response: $json.output }) }}",
+        "options": {}
+      }
     },
     {
-      "position": [
-        0,
-        500
-      ],
-      "id": "acr-01",
-      "name": "generate_uuid",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-01", "name": "generate_uuid",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [0, 500],
       "parameters": {
-        "resource": "uuid_generator",
-        "version": "={{ $fromAI('version','UUID version v1 or v4','string','v4') }}",
-        "operation": "generate_uuid",
-        "count": "={{ $fromAI('count','Number of UUIDs to generate 1-100','number',1) }}"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "generate_uuid",
+        "description": "Generate one or more UUIDs. version=v1 or v4, count=how many",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "uuid_generator",
+            "operation": "generate_uuid",
+            "count": "={{ $fromAI('count','How many UUIDs to generate 1-100','number',1) }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"count","displayName":"count","type":"number","required":false,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     },
     {
-      "position": [
-        220,
-        500
-      ],
-      "id": "acr-02",
-      "name": "generate_qr_code",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-02", "name": "generate_qr_code",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [220, 500],
       "parameters": {
-        "format": "={{ $fromAI('format','Output format png or svg','string','png') }}",
-        "resource": "qr_code_generator",
-        "text": "={{ $fromAI('text','Text or URL to encode in the QR code') }}",
-        "operation": "generate_qr",
-        "size": "={{ $fromAI('size','Size in pixels 100-1000','number',300) }}"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "generate_qr_code",
+        "description": "Generate a QR code image from text or URL. Returns base64 PNG or SVG.",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "qr_code_generator",
+            "operation": "generate_qr",
+            "text": "={{ $fromAI('text','Text or URL to encode in the QR code') }}",
+            "format": "={{ $fromAI('format','Image format png or svg','string','png') }}",
+            "size": "={{ $fromAI('size','Size in pixels 100-1000','number',300) }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"text","displayName":"text","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"format","displayName":"format","type":"string","required":false,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"size","displayName":"size","type":"number","required":false,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     },
     {
-      "position": [
-        440,
-        500
-      ],
-      "id": "acr-03",
-      "name": "generate_barcode",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-03", "name": "generate_barcode",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [440, 500],
       "parameters": {
-        "resource": "barcode_generator",
-        "text": "={{ $fromAI('text','Text or numbers to encode in the barcode') }}",
-        "operation": "generate_barcode"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "generate_barcode",
+        "description": "Generate a 1D barcode from text or numbers.",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "barcode_generator",
+            "operation": "generate_barcode",
+            "text": "={{ $fromAI('text','Text or numbers to encode in the barcode') }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"text","displayName":"text","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     },
     {
-      "position": [
-        660,
-        500
-      ],
-      "id": "acr-04",
-      "name": "match_regex",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-04", "name": "match_regex",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [660, 500],
       "parameters": {
-        "pattern": "={{ $fromAI('pattern','The regex pattern to match') }}",
-        "resource": "regex_matcher",
-        "text": "={{ $fromAI('text','The text to search in') }}",
-        "operation": "match_pattern",
-        "flags": "={{ $fromAI('flags','Regex flags g=global i=case-insensitive m=multiline','string','g') }}"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "match_regex",
+        "description": "Run a regex pattern against text and return all matches.",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "regex_matcher",
+            "operation": "match_pattern",
+            "text": "={{ $fromAI('text','The text to search in') }}",
+            "pattern": "={{ $fromAI('pattern','The regex pattern to match') }}",
+            "flags": "={{ $fromAI('flags','Regex flags g=global i=case-insensitive m=multiline','string','g') }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"text","displayName":"text","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"pattern","displayName":"pattern","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"flags","displayName":"flags","type":"string","required":false,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     },
     {
-      "position": [
-        880,
-        500
-      ],
-      "id": "acr-05",
-      "name": "compare_texts",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-05", "name": "compare_texts",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [880, 500],
       "parameters": {
-        "text1": "={{ $fromAI('text1','The original text before version') }}",
-        "resource": "text_diff",
-        "format": "={{ $fromAI('format','Output format unified or json','string','unified') }}",
-        "text2": "={{ $fromAI('text2','The modified text after version') }}",
-        "operation": "compare_text"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "compare_texts",
+        "description": "Compute a line-by-line diff between two text versions.",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "text_diff",
+            "operation": "compare_text",
+            "text1": "={{ $fromAI('text1','The original text before changes') }}",
+            "text2": "={{ $fromAI('text2','The modified text after changes') }}",
+            "format": "={{ $fromAI('format','Output format unified or json','string','unified') }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"text1","displayName":"text1","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"text2","displayName":"text2","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"format","displayName":"format","type":"string","required":false,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     },
     {
-      "position": [
-        1100,
-        500
-      ],
-      "id": "acr-06",
-      "name": "encode_url",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-06", "name": "encode_url",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [1100, 500],
       "parameters": {
-        "resource": "url_encoder_decoder",
-        "text": "={{ $fromAI('text','Text to URL-encode') }}",
-        "operation": "encode"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "encode_url",
+        "description": "URL-encode a string for use in query parameters or form data.",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "url_encoder_decoder",
+            "operation": "encode",
+            "text": "={{ $fromAI('text','Text to URL-encode') }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"text","displayName":"text","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     },
     {
-      "position": [
-        1320,
-        500
-      ],
-      "id": "acr-07",
-      "name": "decode_url",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-07", "name": "decode_url",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [1320, 500],
       "parameters": {
-        "resource": "url_encoder_decoder",
-        "text": "={{ $fromAI('text','URL-encoded text to decode') }}",
-        "operation": "decode"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "decode_url",
+        "description": "Decode a URL-encoded string back to plain text.",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "url_encoder_decoder",
+            "operation": "decode",
+            "text": "={{ $fromAI('text','URL-encoded text to decode') }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"text","displayName":"text","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     },
     {
-      "position": [
-        1540,
-        500
-      ],
-      "id": "acr-08",
-      "name": "convert_timezone",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-08", "name": "convert_timezone",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [1540, 500],
       "parameters": {
-        "fromTimezone": "={{ $fromAI('fromTimezone','Source timezone e.g. UTC EST PST CET JST AEST') }}",
-        "resource": "timezone_converter",
-        "datetime": "={{ $fromAI('datetime','Datetime string e.g. 2025-10-23T12:00:00') }}",
-        "operation": "convert_timezone",
-        "toTimezone": "={{ $fromAI('toTimezone','Target timezone e.g. UTC EST PST CET JST AEST') }}"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "convert_timezone",
+        "description": "Convert a datetime string from one timezone to another.",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "timezone_converter",
+            "operation": "convert_timezone",
+            "datetime": "={{ $fromAI('datetime','Datetime string e.g. 2025-10-23T12:00:00') }}",
+            "fromTimezone": "={{ $fromAI('fromTimezone','Source timezone e.g. UTC EST PST CET JST AEST') }}",
+            "toTimezone": "={{ $fromAI('toTimezone','Target timezone e.g. UTC EST PST CET JST AEST') }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"datetime","displayName":"datetime","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"fromTimezone","displayName":"fromTimezone","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"toTimezone","displayName":"toTimezone","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     },
     {
-      "position": [
-        1760,
-        500
-      ],
-      "id": "acr-09",
-      "name": "generate_markdown_table",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-09", "name": "generate_markdown_table",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [1760, 500],
       "parameters": {
-        "headers": "={{ $fromAI('headers','JSON array of column headers e.g. [Name,Score]') }}",
-        "resource": "markdown_table_generator",
-        "rows": "={{ $fromAI('rows','JSON array of arrays with row values e.g. [[Alice,95],[Bob,87]]') }}",
-        "operation": "generate_table"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "generate_markdown_table",
+        "description": "Generate a formatted Markdown table from column headers and row data.",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "markdown_table_generator",
+            "operation": "generate_table",
+            "headers": "={{ $fromAI('headers','JSON array of column header strings e.g. [Name,Score]') }}",
+            "rows": "={{ $fromAI('rows','JSON array of row arrays e.g. [[Alice,95],[Bob,87]]') }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"headers","displayName":"headers","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"rows","displayName":"rows","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     },
     {
-      "position": [
-        0,
-        800
-      ],
-      "id": "acr-10",
-      "name": "validate_json_schema",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-10", "name": "validate_json_schema",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [0, 800],
       "parameters": {
-        "resource": "json_schema_validator",
-        "data": "={{ $fromAI('data','JSON string of the data to validate') }}",
-        "operation": "validate_json",
-        "schema": "={{ $fromAI('schema','JSON Schema string to validate against') }}"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "validate_json_schema",
+        "description": "Validate a JSON object against a JSON Schema. Returns valid=true/false and any errors.",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "json_schema_validator",
+            "operation": "validate_json",
+            "data": "={{ $fromAI('data','JSON string of the data to validate') }}",
+            "schema": "={{ $fromAI('schema','JSON Schema string to validate against') }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"data","displayName":"data","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"schema","displayName":"schema","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     },
     {
-      "position": [
-        220,
-        800
-      ],
-      "id": "acr-11",
-      "name": "fetch_url_as_markdown",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-11", "name": "fetch_url_as_markdown",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [220, 800],
       "parameters": {
-        "resource": "url_to_markdown",
-        "url": "={{ $fromAI('url','Full URL of the webpage to fetch and convert to Markdown') }}",
-        "operation": "url_to_markdown"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "fetch_url_as_markdown",
+        "description": "Fetch a public webpage and convert its content to clean Markdown.",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "url_to_markdown",
+            "operation": "url_to_markdown",
+            "url": "={{ $fromAI('url','Full URL of the webpage to fetch') }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"url","displayName":"url","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     },
     {
-      "position": [
-        440,
-        800
-      ],
-      "id": "acr-12",
-      "name": "convert_html_to_pdf",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-12", "name": "convert_html_to_pdf",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [440, 800],
       "parameters": {
-        "resource": "html_to_pdf",
-        "operation": "convert_pdf",
-        "html": "={{ $fromAI('html','Complete HTML document to convert. Include full html/head/style/body with inline CSS.') }}"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "convert_html_to_pdf",
+        "description": "Convert an HTML string to a PDF document. Write complete styled HTML with inline CSS before calling.",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "html_to_pdf",
+            "operation": "convert_pdf",
+            "html": "={{ $fromAI('html','Complete HTML document with inline CSS to convert to PDF') }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"html","displayName":"html","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     },
     {
-      "position": [
-        660,
-        800
-      ],
-      "id": "acr-13",
-      "name": "convert_html_to_markdown",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-13", "name": "convert_html_to_markdown",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [660, 800],
       "parameters": {
-        "resource": "html_to_markdown",
-        "preserve_tables": "={{ $fromAI('preserve_tables','Whether to preserve table formatting true or false','string','true') }}",
-        "content": "={{ $fromAI('content','HTML content to convert to Markdown') }}",
-        "operation": "convert"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "convert_html_to_markdown",
+        "description": "Convert HTML content to clean Markdown text.",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "html_to_markdown",
+            "operation": "convert",
+            "content": "={{ $fromAI('content','HTML content to convert to Markdown') }}",
+            "preserve_tables": "={{ $fromAI('preserve_tables','Preserve table formatting true or false','string','true') }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"content","displayName":"content","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"preserve_tables","displayName":"preserve_tables","type":"string","required":false,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     },
     {
-      "position": [
-        880,
-        800
-      ],
-      "id": "acr-14",
-      "name": "convert_markdown_to_html",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-14", "name": "convert_markdown_to_html",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [880, 800],
       "parameters": {
-        "resource": "markdown_to_html",
-        "include_styles": "={{ $fromAI('include_styles','Include CSS styles true or false','string','true') }}",
-        "content": "={{ $fromAI('content','Markdown content to convert to HTML') }}",
-        "operation": "convert",
-        "highlight_code": "={{ $fromAI('highlight_code','Add syntax highlighting true or false','string','true') }}"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "convert_markdown_to_html",
+        "description": "Convert Markdown to a full HTML document with optional styling and code highlighting.",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "markdown_to_html",
+            "operation": "convert",
+            "content": "={{ $fromAI('content','Markdown content to convert to HTML') }}",
+            "include_styles": "={{ $fromAI('include_styles','Include CSS styles true or false','string','true') }}",
+            "highlight_code": "={{ $fromAI('highlight_code','Add syntax highlighting true or false','string','true') }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"content","displayName":"content","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"include_styles","displayName":"include_styles","type":"string","required":false,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"highlight_code","displayName":"highlight_code","type":"string","required":false,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     },
     {
-      "position": [
-        1100,
-        800
-      ],
-      "id": "acr-15",
-      "name": "convert_image",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-15", "name": "convert_image",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [1100, 800],
       "parameters": {
-        "imageUrl": "={{ $fromAI('imageUrl','Full public URL of the image to convert') }}",
-        "resource": "image_converter",
-        "format": "={{ $fromAI('format','Output format jpeg png or webp','string','jpeg') }}",
-        "operation": "convert_image",
-        "quality": "={{ $fromAI('quality','Output quality 1-100','number',85) }}"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "convert_image",
+        "description": "Convert an image from one format to another via a public image URL.",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "image_converter",
+            "operation": "convert_image",
+            "imageUrl": "={{ $fromAI('imageUrl','Full public URL of the image to convert') }}",
+            "format": "={{ $fromAI('format','Output format jpeg png or webp','string','jpeg') }}",
+            "quality": "={{ $fromAI('quality','Output quality 1-100','number',85) }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"imageUrl","displayName":"imageUrl","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"format","displayName":"format","type":"string","required":false,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"quality","displayName":"quality","type":"number","required":false,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     },
     {
-      "position": [
-        1320,
-        800
-      ],
-      "id": "acr-16",
-      "name": "json_to_excel",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-16", "name": "json_to_excel",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [1320, 800],
       "parameters": {
-        "resource": "json_to_excel",
-        "data": "={{ $fromAI('data','JSON array of objects. Each object is a row, keys become headers.') }}",
-        "operation": "create_excel",
-        "sheetName": "={{ $fromAI('sheetName','Name for the Excel sheet tab','string','Sheet1') }}"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "json_to_excel",
+        "description": "Convert a JSON array of objects into a downloadable Excel spreadsheet.",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "json_to_excel",
+            "operation": "create_excel",
+            "data": "={{ $fromAI('data','JSON array of objects. Each object is a row, keys become headers.') }}",
+            "sheetName": "={{ $fromAI('sheetName','Name for the Excel sheet tab','string','Sheet1') }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"data","displayName":"data","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"sheetName","displayName":"sheetName","type":"string","required":false,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     },
     {
-      "position": [
-        1540,
-        800
-      ],
-      "id": "acr-17",
-      "name": "extract_links",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-17", "name": "extract_links",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [1540, 800],
       "parameters": {
-        "resource": "sitemap_generator",
-        "url": "={{ $fromAI('url','URL of the webpage to extract all links from') }}",
-        "operation": "extract_links"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "extract_links",
+        "description": "Extract all links from a webpage.",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "sitemap_generator",
+            "operation": "extract_links",
+            "url": "={{ $fromAI('url','URL of the webpage to extract links from') }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"url","displayName":"url","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     },
     {
-      "position": [
-        1760,
-        800
-      ],
-      "id": "acr-18",
-      "name": "generate_sitemap",
-      "typeVersion": 1,
-      "credentials": {
-        "acrewityApi": {
-          "id": "9c6Djy26XhhZQMOP",
-          "name": "Acrewity account"
-        }
-      },
+      "id": "tw-18", "name": "generate_sitemap",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow", "typeVersion": 2.1,
+      "position": [1760, 800],
       "parameters": {
-        "resource": "sitemap_generator",
-        "url": "={{ $fromAI('url','Starting URL to crawl and generate a sitemap for') }}",
-        "operation": "generate_sitemap"
-      },
-      "type": "@acrewity/n8n-nodes-acrewity.acrewity"
+        "name": "generate_sitemap",
+        "description": "Crawl a website starting from a URL and generate an XML sitemap.",
+        "source": "database",
+        "workflowId": {"__rl": true, "value": "zDhzhF6oKNpfzEas", "mode": "id"},
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "sitemap_generator",
+            "operation": "generate_sitemap",
+            "url": "={{ $fromAI('url','Starting URL to crawl and generate a sitemap for') }}"
+          },
+          "schema": [
+            {"id":"service","displayName":"service","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"operation","displayName":"operation","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false},
+            {"id":"url","displayName":"url","type":"string","required":true,"display":true,"canBeUsedToMatch":true,"defaultMatch":false,"removed":false}
+          ]
+        }
+      }
     }
   ],
-  "name": "Acrewity AI Agent"
+  "connections": {
+    "Webhook": {"main": [[{"node": "AI Agent", "type": "main", "index": 0}]]},
+    "AI Agent": {"main": [[{"node": "Respond", "type": "main", "index": 0}]]},
+    "Claude Sonnet 4.6": {"ai_languageModel": [[{"node": "AI Agent", "type": "ai_languageModel", "index": 0}]]},
+    "generate_uuid": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]},
+    "generate_qr_code": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]},
+    "generate_barcode": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]},
+    "match_regex": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]},
+    "compare_texts": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]},
+    "encode_url": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]},
+    "decode_url": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]},
+    "convert_timezone": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]},
+    "generate_markdown_table": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]},
+    "validate_json_schema": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]},
+    "fetch_url_as_markdown": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]},
+    "convert_html_to_pdf": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]},
+    "convert_html_to_markdown": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]},
+    "convert_markdown_to_html": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]},
+    "convert_image": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]},
+    "json_to_excel": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]},
+    "extract_links": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]},
+    "generate_sitemap": {"ai_tool": [[{"node": "AI Agent", "type": "ai_tool", "index": 0}]]}
+  }
 }
