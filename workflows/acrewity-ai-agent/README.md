@@ -90,10 +90,31 @@ curl -X POST https://YOUR-N8N-URL/webhook/acrewity-agent \
 
 ## Extending the agent
 
-To add more Acrewity services, duplicate any existing tool node and update:
+To add more Acrewity services, duplicate any existing tool node (type: **Code tool**) and update:
 1. `name` — snake_case tool identifier (e.g. `convert_image_format`)
 2. `description` — what it does and when to use it (the AI reads this)
-3. `jsonBody` — the Acrewity API call with `$fromAI()` parameters
+3. `jsCode` — declare `$fromAI()` calls at the top of the code for each parameter the AI fills in, then call the Acrewity API via `fetch`
+
+Example skeleton:
+```javascript
+const myParam = $fromAI('my_param', 'Description of the parameter');
+
+const response = await fetch('https://www.acrewity.com/api/services/execute', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer YOUR_ACREWITY_API_KEY'
+  },
+  body: JSON.stringify({
+    service: 'your_service_id',
+    operation: 'your_operation',
+    parameters: { my_param: myParam }
+  })
+});
+
+const data = await response.json();
+return JSON.stringify(data);
+```
 
 All available Acrewity services: `uuid_generator`, `regex_matcher`, `text_diff`, `url_encoder_decoder`, `timezone_converter`, `json_schema_validator`, `url_to_markdown`, `html_to_pdf`, `html_to_markdown`, `markdown_to_html`, `qr_code_generator`, `markdown_table_generator`, `image_converter`, `excel_to_json`, `excel_editor`, `pdf_merge`, `pdf_extract_page`, `pdf_to_html`, `pdf_to_markdown`, `email_access`.
 
