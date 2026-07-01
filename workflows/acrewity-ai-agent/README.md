@@ -12,17 +12,22 @@ An AI agent that accepts natural language requests and autonomously calls the ri
 
 ## How it works
 
+This template uses **two workflows** — import and activate both:
+
 ```
 POST /webhook/acrewity-agent
   { "message": "Generate a QR code for https://acrewity.com" }
-  
-→ AI Agent (Claude) receives the message
-→ Selects the right tool from 6 available Acrewity services
-→ Calls the Acrewity API with appropriate parameters
-→ Returns the result
 
-{ "success": true, "response": "QR code generated successfully. Here is the base64 PNG data: ..." }
+→ Main Agent workflow receives the message
+→ AI selects the right tool from 6 Acrewity services
+→ Tool calls the Dispatcher workflow (sub-workflow)
+→ Dispatcher builds the request body and calls Acrewity API
+→ Result returns up through the chain
+
+{ "success": true, "response": "QR code generated. Base64 PNG: ..." }
 ```
+
+**Why two workflows?** n8n's AI tool nodes (`toolWorkflow`) call sub-workflows to make HTTP requests. This is the only approach that reliably passes `$fromAI()` parameters through to Anthropic's tool schema while allowing real HTTP calls.
 
 ## Tools available
 
@@ -31,44 +36,54 @@ POST /webhook/acrewity-agent
 | `generate_qr_code` | Encode any text or URL into a scannable QR image (PNG or SVG) |
 | `convert_html_to_pdf` | Render HTML into a downloadable PDF — Claude writes styled HTML first |
 | `fetch_url_as_markdown` | Fetch any webpage and return its content as clean Markdown |
-| `generate_uuid` | Generate v1 or v4 UUIDs in any quantity |
+| `generate_uuid` | Generate random UUIDs in any quantity |
 | `compare_texts` | Compute a line-by-line diff between two text versions |
 | `json_to_excel` | Convert a JSON array into a downloadable Excel spreadsheet |
 
 ## Setup
 
 ### Prerequisites
-- n8n with the `@n8n/n8n-nodes-langchain` package (included in cloud and recent self-hosted)
+- n8n (self-hosted or cloud) with the `@n8n/n8n-nodes-langchain` package
 - An [Acrewity API key](https://www.acrewity.com) (free tier available)
 - An Anthropic API key (or swap the model node for OpenAI, Mistral, etc.)
 
-### 1. Import the workflow
+### Step 1 — Import and configure the Dispatcher
 
-In n8n: **Workflows → Import from file** → upload `workflow.json`.
+1. In n8n: **Workflows → Import from file** → upload `dispatcher.json`
+2. Open the imported **Acrewity API Dispatcher** workflow
+3. Click the **Call Acrewity API** node
+4. Replace `YOUR_ACREWITY_API_KEY` in the Authorization header with your actual key
+5. **Save** the workflow
+6. **Activate** the workflow (toggle in the top-right) — this step is required
+7. Copy the workflow **ID** from the URL bar (e.g. `https://your-n8n.com/workflow/abc123xyz` → ID is `abc123xyz`)
 
-### 2. Configure your Acrewity API key
+> **Important:** The dispatcher must be active before the main agent will work. n8n cannot call inactive sub-workflows.
 
-Each tool node sends requests to `https://www.acrewity.com/api/services/execute` with an `Authorization: Bearer YOUR_ACREWITY_API_KEY` header.
+### Step 2 — Import and configure the Main Agent
 
-Replace `YOUR_ACREWITY_API_KEY` in each of the 6 tool nodes, or create a single n8n credential and reference it.
+1. In n8n: **Workflows → Import from file** → upload `workflow.json`
+2. Open the imported **Acrewity AI Agent** workflow
+3. For each of the 6 tool nodes (`generate_qr_code`, `convert_html_to_pdf`, etc.):
+   - Click the node
+   - In the **Workflow** field, replace `YOUR_DISPATCHER_WORKFLOW_ID` with the ID you copied in Step 1
+4. Click the **Claude (your model)** node and select your Anthropic credential
+5. **Save** the workflow
+6. **Activate** the workflow
 
-> Get your API key at [acrewity.com](https://www.acrewity.com) — free tier includes 100 requests/month.
-
-### 3. Configure your AI model
-
-The workflow uses Claude by default. Replace the `Claude (your model)` node with any supported model:
-- **OpenAI**: swap for `@n8n/n8n-nodes-langchain.lmChatOpenAi`
-- **Mistral**: swap for `@n8n/n8n-nodes-langchain.lmChatMistralCloud`
-- **Ollama**: swap for `@n8n/n8n-nodes-langchain.lmChatOllama` (local)
-
-### 4. Activate and test
-
-Activate the workflow, then send a test request:
+### Step 3 — Test
 
 ```bash
 curl -X POST https://YOUR-N8N-URL/webhook/acrewity-agent \
   -H "Content-Type: application/json" \
   -d '{"message": "Generate 3 random UUIDs"}'
+```
+
+Expected response:
+```json
+{
+  "success": true,
+  "response": "Here are 3 UUIDs: ..."
+}
 ```
 
 ## API reference
@@ -84,44 +99,51 @@ curl -X POST https://YOUR-N8N-URL/webhook/acrewity-agent \
 ```json
 {
   "success": true,
-  "response": "Agent's text response including any file data"
+  "response": "Agent's text response including any file data or results"
 }
 ```
 
+## Changing the AI model
+
+The workflow uses Claude by default. To use a different model, replace the **Claude (your model)** node:
+
+| Model | n8n node type |
+|-------|--------------|
+| OpenAI GPT | `@n8n/n8n-nodes-langchain.lmChatOpenAi` |
+| Mistral | `@n8n/n8n-nodes-langchain.lmChatMistralCloud` |
+| Google Gemini | `@n8n/n8n-nodes-langchain.lmChatGoogleGemini` |
+| Ollama (local) | `@n8n/n8n-nodes-langchain.lmChatOllama` |
+
 ## Extending the agent
 
-To add more Acrewity services, duplicate any existing tool node (type: **Code tool**) and update:
-1. `name` — snake_case tool identifier (e.g. `convert_image_format`)
-2. `description` — what it does and when to use it (the AI reads this)
-3. `jsCode` — declare `$fromAI()` calls at the top of the code for each parameter the AI fills in, then call the Acrewity API via `fetch`
+To add more Acrewity services:
 
-Example skeleton:
-```javascript
-const myParam = $fromAI('my_param', 'Description of the parameter');
+1. Duplicate any existing tool node (type: **Workflow tool**)
+2. Update the node's `name` and `description`
+3. In **Workflow Inputs**, set `service` and `operation` to the Acrewity API values, and add `$fromAI()` expressions for any parameters the AI should fill in
+4. Connect the new node to the AI Agent node via the `ai_tool` output
 
-const response = await fetch('https://www.acrewity.com/api/services/execute', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer YOUR_ACREWITY_API_KEY'
-  },
-  body: JSON.stringify({
-    service: 'your_service_id',
-    operation: 'your_operation',
-    parameters: { my_param: myParam }
-  })
-});
+The dispatcher automatically handles any new service/operation combinations — no changes needed there (except for `json-to-excel`, which has special parameter handling already built in).
 
-const data = await response.json();
-return JSON.stringify(data);
-```
+**Available Acrewity service IDs:** `uuid_generator`, `regex_matcher`, `text-diff`, `url_encoder_decoder`, `timezone_converter`, `json_schema_validator`, `url_to_markdown`, `html_to_pdf`, `html_to_markdown`, `markdown_to_html`, `qr_code_generator`, `markdown_table_generator`, `image_converter`, `excel_to_json`, `json-to-excel`, `pdf_merge`, `pdf_extract_page`, `pdf_to_html`, `pdf_to_markdown`, `email_access`.
 
-All available Acrewity services: `uuid_generator`, `regex_matcher`, `text_diff`, `url_encoder_decoder`, `timezone_converter`, `json_schema_validator`, `url_to_markdown`, `html_to_pdf`, `html_to_markdown`, `markdown_to_html`, `qr_code_generator`, `markdown_table_generator`, `image_converter`, `excel_to_json`, `excel_editor`, `pdf_merge`, `pdf_extract_page`, `pdf_to_html`, `pdf_to_markdown`, `email_access`.
+See the [Acrewity API docs](https://www.acrewity.com/docs) for each service's parameters.
 
-See the [Acrewity API docs](https://www.acrewity.com) for parameters.
+## Troubleshooting
+
+**Agent responds without calling any tools**
+- Check that the Dispatcher workflow is active (Step 1, point 6 above)
+- Verify the dispatcher workflow ID is correctly set in all 6 tool nodes
+
+**"Workflow is not active" error**
+- Go to the Dispatcher workflow and activate it
+
+**Tool returns an error from Acrewity**
+- Verify your API key is correct in the Dispatcher's HTTP Request node
+- Check your Acrewity credit balance at [acrewity.com](https://www.acrewity.com)
 
 ## Related templates
 
 - [Invoice PDF Generator](../invoice-pdf-generator/) — structured webhook → styled HTML → PDF
-- [Web Page Summarizer](../web-page-summarizer/) — URL → Markdown → AI summary
+- [Web Page Summarizer](../web-page-ai-summarizer/) — URL → Markdown → AI summary
 - [SEO Page Analyzer](../seo-page-analyzer/) — URL → structured SEO report
