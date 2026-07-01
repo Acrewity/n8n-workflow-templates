@@ -19,7 +19,7 @@ POST /webhook/acrewity-agent
   { "message": "Generate a QR code for https://acrewity.com" }
 
 → Main Agent workflow receives the message
-→ AI selects the right tool from 6 Acrewity services
+→ AI selects the right tool from 14 Acrewity services
 → Tool calls the Dispatcher workflow (sub-workflow)
 → Dispatcher builds the request body and calls Acrewity API
 → Result returns up through the chain
@@ -39,6 +39,14 @@ POST /webhook/acrewity-agent
 | `generate_uuid` | Generate random UUIDs in any quantity |
 | `compare_texts` | Compute a line-by-line diff between two text versions |
 | `json_to_excel` | Convert a JSON array into a downloadable Excel spreadsheet |
+| `convert_html_to_markdown` | Convert HTML content into clean Markdown text |
+| `convert_image` | Convert an image between JPEG, PNG, and WebP formats (requires public URL) |
+| `validate_json_schema` | Validate a JSON object against a JSON Schema, returns errors if any |
+| `generate_markdown_table` | Generate a formatted Markdown table from headers and row data |
+| `convert_markdown_to_html` | Convert Markdown into a full HTML document with optional styling |
+| `match_regex` | Run a regex pattern against text and return all matches |
+| `convert_timezone` | Convert a datetime between timezone abbreviations (UTC, EST, PST, CET, JST…) |
+| `encode_or_decode_url` | URL-encode or URL-decode any string |
 
 ## Setup
 
