@@ -1,105 +1,69 @@
-# Acrewity AI Agent — n8n Workflow Template
+# Acrewity AI Agent for n8n
 
-A production-ready AI Agent workflow that connects Claude Sonnet to 18 Acrewity utility tools via the official `@acrewity/n8n-nodes-acrewity` community node.
+An AI Agent powered by Claude that gives it access to 25 Acrewity utility services — PDF processing, QR codes, data conversion, web scraping, and more — directly through the Acrewity community node.
+
+## Prerequisites
+
+- n8n 2.x with the **Acrewity community node** installed: `@acrewity/n8n-nodes-acrewity` v0.2.2+
+- An **Acrewity API key** (get one at [acrewity.com](https://acrewity.com))
+- An **Anthropic API key** for Claude
+
+## Setup
+
+1. **Install the community node** — n8n Settings → Community Nodes → Install → `@acrewity/n8n-nodes-acrewity`
+2. **Import this workflow** — copy `workflow.json` and import via n8n → Workflows → Import
+3. **Add credentials**:
+   - Create an **Acrewity API** credential with your API key and assign it to all Acrewity nodes
+   - Create an **Anthropic** credential with your API key and assign it to the Claude model node
+4. **Activate** the workflow
+5. **Test** by sending a POST request to the webhook URL with `{ "message": "Generate 3 UUIDs" }`
+
+## Available tools (25)
+
+| Tool | What it does |
+|------|-------------|
+| Generate UUID | Generate random v1 or v4 UUIDs |
+| Generate QR Code | Create QR code images from text or URLs |
+| Generate Barcode | Create 1D barcode images (Code128, EAN, UPC) |
+| Match Regex | Run regex patterns against text |
+| Compare Texts | Line-by-line diff between two texts |
+| URL Encode | Percent-encode a string for URLs |
+| URL Decode | Decode a percent-encoded string |
+| Convert Timezone | Convert datetimes between timezones |
+| Generate Markdown Table | Build a Markdown table from headers and rows |
+| Validate JSON Schema | Validate JSON data against a JSON Schema |
+| Fetch URL as Markdown | Fetch a webpage and convert to Markdown |
+| HTML to PDF | Render HTML as a downloadable PDF |
+| HTML to Markdown | Convert HTML to clean Markdown |
+| Markdown to HTML | Convert Markdown to a styled HTML document |
+| Markdown to HTML Fragment | Convert Markdown to an HTML fragment |
+| Convert Image | Convert images between formats (JPEG, PNG, WebP) |
+| JSON to Excel | Convert JSON array to a single-sheet Excel file |
+| JSON to Multi-Sheet Excel | Create a multi-sheet Excel workbook from JSON |
+| Extract Links | Extract all links from a webpage |
+| Generate Sitemap | Generate an XML sitemap from URLs |
+| PDF to Markdown | Convert PDF files to Markdown text |
+| PDF to HTML | Convert PDF files to HTML |
+| Merge PDFs | Merge multiple PDF files into one |
+| Excel to JSON | Convert Excel files to JSON |
+| Send Email | Send email via SMTP |
 
 ## Architecture
 
 ```
-POST /webhook/acrewity-agent
-         │
-         ▼
-    Webhook node
-         │
-         ▼
-    AI Agent (Claude Sonnet 4.6)
-    ├── generate_uuid
-    ├── generate_qr_code
-    ├── generate_barcode
-    ├── match_regex
-    ├── compare_texts
-    ├── encode_url
-    ├── decode_url
-    ├── convert_timezone
-    ├── generate_markdown_table
-    ├── validate_json_schema
-    ├── fetch_url_as_markdown
-    ├── convert_html_to_pdf
-    ├── convert_html_to_markdown
-    ├── convert_markdown_to_html
-    ├── convert_image
-    ├── json_to_excel
-    ├── extract_links
-    └── generate_sitemap
-         │
-         ▼
-    Respond to Webhook
+Webhook → AI Agent (Claude) → 25 Acrewity nodes (ai_tool)
 ```
 
-Each Acrewity node uses `$fromAI()` expressions so the AI agent fills in the parameters dynamically based on the user's request.
+Each Acrewity node is configured for a specific service and operation and connected directly to the AI Agent via the `ai_tool` port. No dispatcher sub-workflow needed.
 
-## Prerequisites
+## Usage
 
-1. **n8n** with the `@acrewity/n8n-nodes-acrewity` community node installed
-2. **Acrewity API key** — get one at [acrewity.com](https://acrewity.com)
-3. **Anthropic API key** — for Claude Sonnet 4.6
+Send a POST request to the webhook URL:
 
-## Setup
-
-1. Install the community node in n8n:
-   - Go to **Settings → Community Nodes → Install**
-   - Enter: `@acrewity/n8n-nodes-acrewity`
-
-2. Import `workflow.json` into n8n
-
-3. Set up credentials:
-   - **Acrewity account**: Add your API key
-   - **Anthropic account**: Add your API key
-
-4. Activate the workflow
-
-5. Test with a POST request:
-   ```bash
-   curl -X POST https://your-n8n.example.com/webhook/acrewity-agent \
-     -H "Content-Type: application/json" \
-     -d '{"message": "Generate 5 UUIDs"}'
-   ```
-
-## Request Format
-
-```json
-{ "message": "your request here" }
+```bash
+curl -X POST https://your-n8n.com/webhook/acrewity-agent \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Convert this HTML to a PDF: <h1>Hello World</h1>"}'
 ```
 
-## Response Format
-
-```json
-{ "success": true, "response": "agent reply here" }
-```
-
-## Tools Reference
-
-| Tool | Resource | Operation | Key Parameters |
-|------|----------|-----------|----------------|
-| generate_uuid | uuid_generator | generate_uuid | version (v1/v4), count |
-| generate_qr_code | qr_code_generator | generate_qr | text, format, size |
-| generate_barcode | barcode_generator | generate_barcode | text |
-| match_regex | regex_matcher | match_pattern | text, pattern, flags |
-| compare_texts | text_diff | compare_text | text1, text2, format |
-| encode_url | url_encoder_decoder | encode | text |
-| decode_url | url_encoder_decoder | decode | text |
-| convert_timezone | timezone_converter | convert_timezone | datetime, fromTimezone, toTimezone |
-| generate_markdown_table | markdown_table_generator | generate_table | headers, rows |
-| validate_json_schema | json_schema_validator | validate_json | data, schema |
-| fetch_url_as_markdown | url_to_markdown | url_to_markdown | url |
-| convert_html_to_pdf | html_to_pdf | convert_pdf | html |
-| convert_html_to_markdown | html_to_markdown | convert | content, preserve_tables |
-| convert_markdown_to_html | markdown_to_html | convert | content, include_styles, highlight_code |
-| convert_image | image_converter | convert_image | imageUrl, format, quality |
-| json_to_excel | json_to_excel | create_excel | data, sheetName |
-| extract_links | sitemap_generator | extract_links | url |
-| generate_sitemap | sitemap_generator | generate_sitemap | url |
-
-## Community Node
-
-Source: [github.com/Acrewity/acrewity-n8n](https://github.com/Acrewity/acrewity-n8n)  
-Package: [`@acrewity/n8n-nodes-acrewity`](https://www.npmjs.com/package/@acrewity/n8n-nodes-acrewity)
+The agent will pick the right tool(s), call the Acrewity API, and return the result.
