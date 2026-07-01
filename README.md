@@ -26,6 +26,7 @@ Ready-to-import n8n workflows powered by the [Acrewity API](https://acrewity.com
 | [SEO Page Analyzer](workflows/seo-page-analyzer/) | Get a full SEO report for any URL — keywords, headings, score, recommendations | `url_to_markdown` + Claude |
 | [PDF Processing Pipeline](workflows/pdf-processing-pipeline/) | Upload a PDF, extract Markdown, generate summary table, convert to HTML | `pdf_to_markdown`, `markdown_table_generator`, `markdown_to_html` |
 | [Markdown Table Generator](workflows/markdown-table-generator/) | Convert a JSON array to a formatted Markdown table | `markdown_table_generator` |
+| [Acrewity AI Agent](workflows/acrewity-ai-agent/) | Natural language interface — say what you need, the AI picks the right service | All services |
 
 ## About Acrewity
 
