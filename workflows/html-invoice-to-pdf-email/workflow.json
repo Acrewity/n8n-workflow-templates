@@ -63,7 +63,7 @@
         300
       ],
       "parameters": {
-        "fromEmail": "panit.ca@gmail.com",
+        "fromEmail": "={{ $vars.FROM_EMAIL }}",
         "toEmail": "={{ $json.to }}",
         "subject": "={{ $json.subject }}",
         "emailFormat": "text",
@@ -144,3 +144,4 @@
     "executionOrder": "v1"
   }
 }
+
