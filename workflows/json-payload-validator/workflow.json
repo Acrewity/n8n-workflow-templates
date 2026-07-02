@@ -15,7 +15,8 @@
         "path": "validate-payload",
         "responseMode": "responseNode",
         "options": {}
-      }
+      },
+      "webhookId": "7e466790-ac4e-4937-80c0-91880661db40"
     },
     {
       "id": "jsval01-0002-0002-0002-000000000002",
@@ -29,8 +30,8 @@
       "parameters": {
         "resource": "json_schema_validator",
         "operation": "validate_json",
-        "json": "={{ JSON.stringify($json.body.data) }}",
-        "schema": "={{ JSON.stringify($json.body.schema) }}"
+        "schema": "={{ JSON.stringify($json.body.schema) }}",
+        "data": "={{ JSON.stringify($json.body.data) }}"
       },
       "credentials": {
         "acrewityApi": {
@@ -58,7 +59,7 @@
           "conditions": [
             {
               "id": "c1",
-              "leftValue": "={{ $json.valid }}",
+              "leftValue": "={{ $json.result.data.valid }}",
               "rightValue": true,
               "operator": {
                 "type": "boolean",
@@ -111,7 +112,7 @@
       "parameters": {
         "respondWith": "json",
         "responseCode": 422,
-        "responseBody": "={{ JSON.stringify({ success: false, errors: $json.errors }) }}"
+        "responseBody": "={{ JSON.stringify({ success: false, errors: $json.result.data.errors }) }}"
       }
     },
     {
@@ -182,13 +183,7 @@
       ]
     }
   },
-  "pinData": {},
   "settings": {
     "executionOrder": "v1"
-  },
-  "staticData": null,
-  "tags": [],
-  "triggerCount": 0,
-  "updatedAt": "2026-07-01T00:00:00.000Z",
-  "versionId": "1"
+  }
 }
