@@ -1,0 +1,191 @@
+{
+  "name": "QR Codes for E-commerce Products",
+  "nodes": [
+    {
+      "id": "qr0001-0001-0001-0001-000000000001",
+      "name": "Receive Product List",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate-product-qr-codes",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "qr0001-0002-0002-0002-000000000002",
+      "name": "Split Products",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      }
+    },
+    {
+      "id": "qr0001-0003-0003-0003-000000000003",
+      "name": "Generate QR Code",
+      "type": "@acrewity/n8n-nodes-acrewity.acrewity",
+      "typeVersion": 1,
+      "position": [
+        680,
+        300
+      ],
+      "parameters": {
+        "resource": "qr_code_generator",
+        "operation": "generate",
+        "text": "={{ $json.url || $json.sku }}",
+        "size": 300,
+        "format": "png"
+      },
+      "credentials": {
+        "acrewityApi": {
+          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
+          "name": "Acrewity account"
+        }
+      }
+    },
+    {
+      "id": "qr0001-0004-0004-0004-000000000004",
+      "name": "Attach Product Info",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        900,
+        300
+      ],
+      "parameters": {
+        "mode": "manual",
+        "fields": {
+          "values": [
+            {
+              "name": "sku",
+              "type": "string",
+              "value": "={{ $('Split Products').item.json.sku }}"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "={{ $('Split Products').item.json.name }}"
+            },
+            {
+              "name": "qr_base64",
+              "type": "string",
+              "value": "={{ $json.content }}"
+            },
+            {
+              "name": "qr_url",
+              "type": "string",
+              "value": "={{ $json.url || '' }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "qr0001-0005-0005-0005-000000000005",
+      "name": "Collect Results",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        300
+      ],
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "products",
+        "options": {}
+      }
+    },
+    {
+      "id": "qr0001-0006-0006-0006-000000000006",
+      "name": "Return QR Codes",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1340,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, count: $json.products.length, products: $json.products }) }}"
+      }
+    }
+  ],
+  "connections": {
+    "Receive Product List": {
+      "main": [
+        [
+          {
+            "node": "Split Products",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Products": {
+      "main": [
+        [
+          {
+            "node": "Generate QR Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate QR Code": {
+      "main": [
+        [
+          {
+            "node": "Attach Product Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attach Product Info": {
+      "main": [
+        [
+          {
+            "node": "Collect Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect Results": {
+      "main": [
+        [
+          {
+            "node": "Return QR Codes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-07-01T00:00:00.000Z",
+  "versionId": "1"
+}
