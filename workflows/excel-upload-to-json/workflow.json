@@ -17,6 +17,21 @@
         "options": {
           "binaryData": true
         }
+      },
+      "webhookId": "0da71e1c-fe89-4b9b-a2b2-2cd93b6972dd"
+    },
+    {
+      "id": "excel01-0001b-001b-001b-000000000001",
+      "name": "Extract Base64",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// n8n stores binary externally in filesystem mode - use helper to read it\nconst binary = $input.item.binary;\nif (!binary || !binary.data) {\n    throw new Error('No file uploaded. POST with multipart/form-data, field name \"data\".');\n}\nconst buffer = await this.helpers.getBinaryDataBuffer(0, 'data');\nconst file_base64 = buffer.toString('base64');\nreturn { json: { file_base64 } };"
       }
     },
     {
@@ -25,14 +40,13 @@
       "type": "@acrewity/n8n-nodes-acrewity.acrewity",
       "typeVersion": 1,
       "position": [
-        460,
+        680,
         300
       ],
       "parameters": {
         "resource": "excel_to_json",
         "operation": "read_excel",
-        "binaryPropertyName": "data",
-        "sheet": "Sheet1"
+        "file": "={{ $json.file_base64 }}"
       },
       "credentials": {
         "acrewityApi": {
@@ -43,20 +57,6 @@
     },
     {
       "id": "excel01-0003-0003-0003-000000000003",
-      "name": "Process Rows",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        680,
-        300
-      ],
-      "parameters": {
-        "mode": "runOnceForAllItems",
-        "jsCode": "// $input.all() returns one item per Excel row\n// Each item.json contains the row data keyed by column header\nconst rows = $input.all().map(item => item.json);\n\n// Example: filter out rows where 'status' column is 'inactive'\n// const filtered = rows.filter(row => row.status !== 'inactive');\n\nreturn [{ json: { total_rows: rows.length, rows } }];"
-      }
-    },
-    {
-      "id": "excel01-0004-0004-0004-000000000004",
       "name": "Return JSON",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
@@ -66,12 +66,23 @@
       ],
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ JSON.stringify({ success: true, total_rows: $json.total_rows, rows: $json.rows }) }}"
+        "responseBody": "={{ JSON.stringify({ success: true, data: $json }) }}"
       }
     }
   ],
   "connections": {
     "Receive Excel Upload": {
+      "main": [
+        [
+          {
+            "node": "Extract Base64",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Base64": {
       "main": [
         [
           {
@@ -86,17 +97,6 @@
       "main": [
         [
           {
-            "node": "Process Rows",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Process Rows": {
-      "main": [
-        [
-          {
             "node": "Return JSON",
             "type": "main",
             "index": 0
@@ -105,13 +105,7 @@
       ]
     }
   },
-  "pinData": {},
   "settings": {
     "executionOrder": "v1"
-  },
-  "staticData": null,
-  "tags": [],
-  "triggerCount": 0,
-  "updatedAt": "2026-07-01T00:00:00.000Z",
-  "versionId": "1"
+  }
 }
