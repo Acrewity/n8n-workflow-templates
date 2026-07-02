@@ -1,0 +1,147 @@
+{
+  "name": "URL to Markdown for LLM Pipelines",
+  "nodes": [
+    {
+      "id": "urlmd01-0001-0001-0001-000000000001",
+      "name": "Receive URL",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "url-to-markdown",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "urlmd01-0002-0002-0002-000000000002",
+      "name": "Fetch URL as Markdown",
+      "type": "@acrewity/n8n-nodes-acrewity.acrewity",
+      "typeVersion": 1,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "resource": "url_to_markdown",
+        "operation": "url_to_markdown",
+        "url": "={{ $json.body.url }}"
+      },
+      "credentials": {
+        "acrewityApi": {
+          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
+          "name": "Acrewity account"
+        }
+      }
+    },
+    {
+      "id": "urlmd01-0003-0003-0003-000000000003",
+      "name": "Summarize with AI",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        680,
+        300
+      ],
+      "parameters": {
+        "prompt": "=You are a helpful assistant. Summarize the following web page content in 3-5 bullet points. Focus on the key takeaways.\n\nURL: {{ $('Receive URL').item.json.body.url }}\n\nContent:\n{{ $json.content }}",
+        "messages": {
+          "messageValues": []
+        }
+      }
+    },
+    {
+      "id": "urlmd01-0003a-003a-003a-000000000003",
+      "name": "Claude",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        680,
+        500
+      ],
+      "parameters": {
+        "model": "claude-haiku-4-5-20251001",
+        "options": {}
+      },
+      "credentials": {
+        "anthropicApi": {
+          "id": "YOUR_ANTHROPIC_CREDENTIAL_ID",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "id": "urlmd01-0004-0004-0004-000000000004",
+      "name": "Return Summary",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        900,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ url: $('Receive URL').item.json.body.url, markdown: $('Fetch URL as Markdown').item.json.content, summary: $json.text }) }}"
+      }
+    }
+  ],
+  "connections": {
+    "Receive URL": {
+      "main": [
+        [
+          {
+            "node": "Fetch URL as Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch URL as Markdown": {
+      "main": [
+        [
+          {
+            "node": "Summarize with AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize with AI": {
+      "main": [
+        [
+          {
+            "node": "Return Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarize with AI",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-07-01T00:00:00.000Z",
+  "versionId": "1"
+}
