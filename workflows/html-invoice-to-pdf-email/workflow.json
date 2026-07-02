@@ -15,7 +15,8 @@
         "path": "generate-invoice-pdf",
         "responseMode": "responseNode",
         "options": {}
-      }
+      },
+      "webhookId": "2b6e5b1f-262f-41f6-839e-1a6b87920ae3"
     },
     {
       "id": "a1b2c3d4-0002-0002-0002-000000000002",
@@ -49,7 +50,7 @@
       ],
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const base64 = $input.item.json.content;\nconst filename = $input.item.json.filename || 'invoice.pdf';\nconst buffer = Buffer.from(base64, 'base64');\nconst binaryData = await this.helpers.prepareBinaryData(buffer, filename, 'application/pdf');\n\nreturn {\n  json: {\n    to: $('Receive Invoice Request').item.json.body.to,\n    subject: $('Receive Invoice Request').item.json.body.subject || 'Your Invoice',\n    message: $('Receive Invoice Request').item.json.body.message || 'Please find your invoice attached.',\n    filename\n  },\n  binary: {\n    attachment: binaryData\n  }\n};"
+        "jsCode": "const base64 = $input.item.json.result.data.content;\nconst filename = $input.item.json.result.data.filename || \"invoice.pdf\";\nconst buffer = Buffer.from(base64, \"base64\");\nconst binaryData = await this.helpers.prepareBinaryData(buffer, filename, \"application/pdf\");\n\nreturn {\n  json: {\n    to: $('Receive Invoice Request').item.json.body.to,\n    subject: $('Receive Invoice Request').item.json.body.subject || \"Your Invoice\",\n    message: $('Receive Invoice Request').item.json.body.message || \"Please find your invoice attached.\",\n    filename\n  },\n  binary: {\n    attachment: binaryData\n  }\n};"
       }
     },
     {
@@ -62,7 +63,7 @@
         300
       ],
       "parameters": {
-        "fromEmail": "={{ $vars.FROM_EMAIL }}",
+        "fromEmail": "panit.ca@gmail.com",
         "toEmail": "={{ $json.to }}",
         "subject": "={{ $json.subject }}",
         "emailFormat": "text",
@@ -75,7 +76,8 @@
           "id": "YOUR_SMTP_CREDENTIAL_ID",
           "name": "SMTP account"
         }
-      }
+      },
+      "webhookId": "ee2e97f6-a905-4f86-9d0c-b6f7b6eec669"
     },
     {
       "id": "a1b2c3d4-0005-0005-0005-000000000005",
@@ -138,13 +140,7 @@
       ]
     }
   },
-  "pinData": {},
   "settings": {
     "executionOrder": "v1"
-  },
-  "staticData": null,
-  "tags": [],
-  "triggerCount": 0,
-  "updatedAt": "2026-07-01T00:00:00.000Z",
-  "versionId": "1"
+  }
 }
