@@ -15,20 +15,21 @@
         "path": "generate-product-qr-codes",
         "responseMode": "responseNode",
         "options": {}
-      }
+      },
+      "webhookId": "bbc02bcd-dd4e-48e2-861f-36c97fb3f3be"
     },
     {
       "id": "qr0001-0002-0002-0002-000000000002",
       "name": "Split Products",
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
         460,
         300
       ],
       "parameters": {
-        "batchSize": 1,
-        "options": {}
+        "jsCode": "const products = $input.all()[0].json.body.products || [];\nreturn products.map(p => ({ json: p }));",
+        "mode": "runOnceForAllItems"
       }
     },
     {
@@ -57,39 +58,15 @@
     {
       "id": "qr0001-0004-0004-0004-000000000004",
       "name": "Attach Product Info",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
         900,
         300
       ],
       "parameters": {
-        "mode": "manual",
-        "fields": {
-          "values": [
-            {
-              "name": "sku",
-              "type": "string",
-              "value": "={{ $('Split Products').item.json.sku }}"
-            },
-            {
-              "name": "name",
-              "type": "string",
-              "value": "={{ $('Split Products').item.json.name }}"
-            },
-            {
-              "name": "qr_base64",
-              "type": "string",
-              "value": "={{ $json.content }}"
-            },
-            {
-              "name": "qr_url",
-              "type": "string",
-              "value": "={{ $json.url || '' }}"
-            }
-          ]
-        },
-        "options": {}
+        "mode": "runOnceForAllItems",
+        "jsCode": "const qrItems = $input.all();\nconst splitItems = $('Split Products').all();\nreturn qrItems.map((qrItem, i) => {\n    const product = splitItems[i] ? splitItems[i].json : {};\n    return {\n        json: {\n            sku: product.sku || '',\n            name: product.name || '',\n            url: product.url || '',\n            qr_base64: (qrItem.json.result && qrItem.json.result.data) ? qrItem.json.result.data.content : ''\n        }\n    };\n});"
       }
     },
     {
@@ -179,13 +156,7 @@
       ]
     }
   },
-  "pinData": {},
   "settings": {
     "executionOrder": "v1"
-  },
-  "staticData": null,
-  "tags": [],
-  "triggerCount": 0,
-  "updatedAt": "2026-07-01T00:00:00.000Z",
-  "versionId": "1"
+  }
 }
