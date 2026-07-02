@@ -1,0 +1,117 @@
+{
+  "name": "Excel Upload to JSON",
+  "nodes": [
+    {
+      "id": "excel01-0001-0001-0001-000000000001",
+      "name": "Receive Excel Upload",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "excel-to-json",
+        "responseMode": "responseNode",
+        "options": {
+          "binaryData": true
+        }
+      }
+    },
+    {
+      "id": "excel01-0002-0002-0002-000000000002",
+      "name": "Convert Excel to JSON",
+      "type": "@acrewity/n8n-nodes-acrewity.acrewity",
+      "typeVersion": 1,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "resource": "excel_to_json",
+        "operation": "read_excel",
+        "binaryPropertyName": "data",
+        "sheet": "Sheet1"
+      },
+      "credentials": {
+        "acrewityApi": {
+          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
+          "name": "Acrewity account"
+        }
+      }
+    },
+    {
+      "id": "excel01-0003-0003-0003-000000000003",
+      "name": "Process Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        680,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// $input.all() returns one item per Excel row\n// Each item.json contains the row data keyed by column header\nconst rows = $input.all().map(item => item.json);\n\n// Example: filter out rows where 'status' column is 'inactive'\n// const filtered = rows.filter(row => row.status !== 'inactive');\n\nreturn [{ json: { total_rows: rows.length, rows } }];"
+      }
+    },
+    {
+      "id": "excel01-0004-0004-0004-000000000004",
+      "name": "Return JSON",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        900,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, total_rows: $json.total_rows, rows: $json.rows }) }}"
+      }
+    }
+  ],
+  "connections": {
+    "Receive Excel Upload": {
+      "main": [
+        [
+          {
+            "node": "Convert Excel to JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Excel to JSON": {
+      "main": [
+        [
+          {
+            "node": "Process Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Rows": {
+      "main": [
+        [
+          {
+            "node": "Return JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-07-01T00:00:00.000Z",
+  "versionId": "1"
+}
