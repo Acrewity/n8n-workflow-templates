@@ -15,7 +15,8 @@
         "path": "url-to-markdown",
         "responseMode": "responseNode",
         "options": {}
-      }
+      },
+      "webhookId": "697187bd-f608-432f-8946-9c19b7fe29a4"
     },
     {
       "id": "urlmd01-0002-0002-0002-000000000002",
@@ -48,10 +49,12 @@
         300
       ],
       "parameters": {
-        "prompt": "=You are a helpful assistant. Summarize the following web page content in 3-5 bullet points. Focus on the key takeaways.\n\nURL: {{ $('Receive URL').item.json.body.url }}\n\nContent:\n{{ $json.content }}",
+        "prompt": "=You are a helpful assistant. Summarize the following web page content in 3-5 bullet points. Focus on the key takeaways.\n\nURL: {{ $('Receive URL').item.json.body.url }}\n\nContent:\n{{ $('Fetch URL as Markdown').item.json.result.data.markdown }}",
         "messages": {
           "messageValues": []
-        }
+        },
+        "promptType": "define",
+        "text": "=You are a helpful assistant. Summarize the following web page content in 3-5 bullet points. Focus on the key takeaways.\n\nURL: {{ $('Receive URL').item.json.body.url }}\n\nContent:\n{{ $('Fetch URL as Markdown').item.json.result.data.markdown }}"
       }
     },
     {
@@ -64,7 +67,12 @@
         500
       ],
       "parameters": {
-        "model": "claude-haiku-4-5-20251001",
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-haiku-4-5-20251001",
+          "cachedResultName": "Claude Haiku 4.5"
+        },
         "options": {}
       },
       "credentials": {
@@ -85,7 +93,7 @@
       ],
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ JSON.stringify({ url: $('Receive URL').item.json.body.url, markdown: $('Fetch URL as Markdown').item.json.content, summary: $json.text }) }}"
+        "responseBody": "={{ JSON.stringify({ url: $('Receive URL').item.json.body.url, markdown: $('Fetch URL as Markdown').item.json.result.data.markdown, summary: $json.text }) }}"
       }
     }
   ],
@@ -135,13 +143,7 @@
       ]
     }
   },
-  "pinData": {},
   "settings": {
     "executionOrder": "v1"
-  },
-  "staticData": null,
-  "tags": [],
-  "triggerCount": 0,
-  "updatedAt": "2026-07-01T00:00:00.000Z",
-  "versionId": "1"
+  }
 }
