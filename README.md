@@ -28,6 +28,12 @@ Ready-to-import n8n workflows powered by the [Acrewity API](https://acrewity.com
 | [Markdown Table Generator](workflows/markdown-table-generator/) | Convert a JSON array to a formatted Markdown table | `markdown_table_generator` |
 | [Acrewity AI Agent](workflows/acrewity-ai-agent/) | Natural language interface — say what you need, the AI picks the right service | All services |
 
+| [HTML Invoice to PDF Email](workflows/html-invoice-to-pdf-email/) | Convert an HTML invoice to PDF and send it as an email attachment | `html_to_pdf` |
+| [QR Codes for E-commerce](workflows/qr-codes-for-ecommerce/) | Batch-generate QR codes for a product catalog | `qr_code_generator` |
+| [URL to Markdown LLM Pipeline](workflows/url-to-markdown-llm-pipeline/) | Fetch any URL as clean markdown, then summarize with Claude | `url_to_markdown` + Claude |
+| [JSON Payload Validator](workflows/json-payload-validator/) | Validate webhook payloads against a JSON Schema; reject bad data with 422 | `json_schema_validator` |
+| [Excel Upload to JSON](workflows/excel-upload-to-json/) | Receive an Excel file upload and convert each row to structured JSON | `excel_to_json` |
+
 ## About Acrewity
 
 [Acrewity](https://acrewity.com) is an API platform with 20+ utility services for document generation, file conversion, QR codes, web scraping, email, and more. Install the community node once, access everything.
