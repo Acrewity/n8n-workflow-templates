@@ -4,7 +4,7 @@ Ready-to-import n8n workflows powered by the [Acrewity API](https://acrewity.com
 
 ## Quick start
 
-1. In n8n go to **Settings > Community Nodes** and install `n8n-nodes-acrewity`
+1. In n8n go to **Settings > Community Nodes** and install `@acrewity/n8n-nodes-acrewity`
 2. Get a free API key at [acrewity.com](https://acrewity.com) (100 credits/month free)
 3. Browse the workflows below, open the folder, and import `workflow.json` via **Workflows > Import from file**
 4. Add your Acrewity credential under **Credentials > New > Acrewity API**
@@ -36,13 +36,13 @@ Ready-to-import n8n workflows powered by the [Acrewity API](https://acrewity.com
 
 ## About Acrewity
 
-[Acrewity](https://acrewity.com) is an API platform with 20+ utility services for document generation, file conversion, QR codes, web scraping, email, and more. Install the community node once, access everything.
+[Acrewity](https://acrewity.com) is an API platform with 22 utility services for document generation, file conversion, QR codes, web scraping, email, and more. Install the community node once, access everything.
 
 ```
-npm install n8n-nodes-acrewity
+npm install @acrewity/n8n-nodes-acrewity
 ```
 
-Or install via **Settings > Community Nodes** in n8n using the package name `n8n-nodes-acrewity`.
+Or install via **Settings > Community Nodes** in n8n using the package name `@acrewity/n8n-nodes-acrewity`.
 
 Free plan includes 100 credits/month. Each API call costs 1 credit.
 

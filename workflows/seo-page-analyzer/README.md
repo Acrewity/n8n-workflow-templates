@@ -6,11 +6,11 @@ Fetches a web page, extracts its content, and runs it through an AI model to pro
 
 - Acrewity API key (free at [acrewity.com](https://acrewity.com))
 - Anthropic API key for the Claude AI model
-- n8n with the `n8n-nodes-acrewity` community node installed
+- n8n with the `@acrewity/n8n-nodes-acrewity` community node installed
 
 ## How to import
 
-1. In n8n go to **Settings > Community Nodes** and install `n8n-nodes-acrewity`
+1. In n8n go to **Settings > Community Nodes** and install `@acrewity/n8n-nodes-acrewity`
 2. Import `workflow.json` via **Workflows > Import from file**
 3. Add your Acrewity credential: **Credentials > New > Acrewity API**
 4. Add your Anthropic credential: **Credentials > New > Anthropic**
