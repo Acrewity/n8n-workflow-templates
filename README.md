@@ -18,6 +18,7 @@ Complete automations you can run as-is: a real trigger, the work, and delivery o
 | [Daily Website Monitor](workflows/daily-website-monitor/) | Watches a list of URLs daily and emails you a digest of what changed | Schedule, `url_to_markdown`, `text_diff`, email |
 | [HTML Invoice to PDF Email](workflows/html-invoice-to-pdf-email/) | Converts an HTML invoice to PDF and sends it to the customer as an email attachment | `html_to_pdf`, SMTP |
 | [Acrewity AI Agent](workflows/acrewity-ai-agent/) | Natural-language interface to all 22 services — the AI picks the right tool automatically | AI Agent, Claude, all services |
+| [Quote PDF Follow-up](workflows/quote-pdf-follow-up/) | Sends a quote PDF the moment a prospect submits the built-in form, then follows up automatically after 3 days | n8n Form, Gmail, Wait |
 
 More end-to-end workflows are on the way, starting with a Google Sheets order-to-invoice pipeline (Sheets trigger, PDF invoice, Gmail delivery, Drive archive).
 
