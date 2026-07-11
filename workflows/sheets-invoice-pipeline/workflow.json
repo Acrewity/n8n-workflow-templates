@@ -1,0 +1,355 @@
+{
+  "name": "Generate and email PDF invoices from new Google Sheets orders",
+  "nodes": [
+    {
+      "id": "aa000001-0000-0000-0000-000000000001",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -240
+      ],
+      "parameters": {
+        "color": 3,
+        "width": 460,
+        "height": 920,
+        "content": "## Generate and email PDF invoices from new Google Sheets orders\n\n### Who's it for\nSmall businesses and freelancers who track orders in a Google Sheet and want every new order to produce a professional PDF invoice that is emailed to the customer and archived in Google Drive, with the sheet updated automatically.\n\n### How it works\n1. Watches your Orders sheet for new rows\n2. Builds a styled HTML invoice from the row data\n3. Converts it to PDF with the Acrewity community node\n4. Emails the PDF to the customer via Gmail\n5. Archives a copy in Google Drive\n6. Writes Status = Invoiced back to the row\n\n### How to set up\n1. Install the verified community node `@acrewity/n8n-nodes-acrewity` and add your Acrewity API credential (free key at acrewity.com, 100 free credits/month)\n2. Connect Google Sheets, Gmail, and Google Drive credentials\n3. Create an Orders sheet with columns: Order Number, Customer Name, Customer Email, Customer Address, Items, Due Date, Notes, Status\n4. Items column holds a JSON array, e.g. [{\"name\":\"Widget\",\"quantity\":2,\"price\":9.99}]\n5. Pick your spreadsheet in the trigger, Drive folder in the archive node, and edit the Workflow configuration node (company name, logo, tax rate)\n\n### How to customize\nAdjust the invoice look in Build invoice HTML, change the email copy in the Gmail node, or add Slack notifications after the archive step."
+      }
+    },
+    {
+      "id": "aa000001-0000-0000-0000-000000000002",
+      "name": "New order row added",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "event": "rowAdded",
+        "options": {}
+      }
+    },
+    {
+      "id": "aa000001-0000-0000-0000-000000000003",
+      "name": "Workflow configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-1",
+              "name": "companyName",
+              "value": "Your Company Inc.",
+              "type": "string"
+            },
+            {
+              "id": "cfg-2",
+              "name": "companyLogoUrl",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "cfg-3",
+              "name": "taxRate",
+              "value": 0.13,
+              "type": "number"
+            },
+            {
+              "id": "cfg-4",
+              "name": "currencySymbol",
+              "value": "$",
+              "type": "string"
+            },
+            {
+              "id": "cfg-5",
+              "name": "emailSubjectPrefix",
+              "value": "Your invoice from Your Company Inc.",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      }
+    },
+    {
+      "id": "aa000001-0000-0000-0000-000000000004",
+      "name": "Build invoice HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// HTML escape helper (XSS protection)\nconst esc = (s = '') => String(s)\n  .replaceAll('&', '&amp;')\n  .replaceAll('<', '&lt;')\n  .replaceAll('>', '&gt;')\n  .replaceAll('\"', '&quot;')\n  .replaceAll(\"'\", '&#39;');\n\nconst row = $input.first().json;\nconst pick = (...keys) => {\n  for (const k of keys) {\n    if (row[k] !== undefined && row[k] !== null && String(row[k]).trim() !== '') return row[k];\n  }\n  return '';\n};\n\nconst config = {\n  companyName: row.companyName || 'Your Company Inc.',\n  logoUrl: row.companyLogoUrl || '',\n  taxRate: Number(row.taxRate) || 0,\n  currency: row.currencySymbol || '$'\n};\n\nconst orderNumber = pick('Order Number', 'OrderNumber', 'order_number') || 'INV-' + Date.now();\nconst customerName = pick('Customer Name', 'CustomerName', 'customer_name') || 'Customer';\nconst customerEmail = pick('Customer Email', 'CustomerEmail', 'customer_email');\nconst customerAddress = pick('Customer Address', 'CustomerAddress', 'customer_address');\nconst dueDate = pick('Due Date', 'DueDate', 'due_date');\nconst notes = pick('Notes', 'notes');\n\nlet items = [];\ntry {\n  const raw = pick('Items', 'items');\n  items = typeof raw === 'string' ? JSON.parse(raw) : (Array.isArray(raw) ? raw : []);\n} catch (e) {\n  throw new Error('The Items column must contain a JSON array like [{\"name\":\"Widget\",\"quantity\":2,\"price\":9.99}] — got: ' + pick('Items', 'items'));\n}\nif (!items.length) {\n  throw new Error('No line items found in the Items column for order ' + orderNumber);\n}\n\nlet itemsHtml = '';\nlet subtotal = 0;\nfor (const item of items) {\n  const qty = Number(item.quantity) || 0;\n  const price = Number(item.price) || 0;\n  const lineTotal = qty * price;\n  subtotal += lineTotal;\n  itemsHtml += '<tr><td>' + esc(item.name) + '</td><td>' + qty + '</td><td>' + config.currency + price.toFixed(2) + '</td><td>' + config.currency + lineTotal.toFixed(2) + '</td></tr>';\n}\n\nconst tax = subtotal * config.taxRate;\nconst total = subtotal + tax;\nconst taxHtml = config.taxRate > 0\n  ? '<p class=\"right\">Tax (' + (config.taxRate * 100).toFixed(0) + '%): ' + config.currency + tax.toFixed(2) + '</p>'\n  : '';\nconst logoHtml = config.logoUrl\n  ? '<img src=\"' + esc(config.logoUrl) + '\" style=\"max-height:60px;max-width:200px;\" alt=\"Logo\">'\n  : '';\nconst dueHtml = dueDate ? '<p><strong>Due Date:</strong> ' + esc(dueDate) + '</p>' : '';\nconst addressHtml = customerAddress ? '<p><strong>Address:</strong> ' + esc(customerAddress) + '</p>' : '';\nconst notesHtml = notes ? '<div class=\"notes\"><strong>Notes:</strong><br>' + esc(notes) + '</div>' : '';\n\nconst html = `<!DOCTYPE html>\n<html>\n<head>\n<style>\n  body { font-family: Arial, sans-serif; padding: 40px; color: #1e293b; }\n  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }\n  h1 { margin: 0 0 4px 0; } h2 { color: #64748b; margin: 0; font-weight: 600; }\n  table { width: 100%; border-collapse: collapse; margin: 20px 0; }\n  th, td { padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }\n  th { background: #f1f5f9; }\n  .right { text-align: right; }\n  .bold { font-weight: bold; font-size: 18px; }\n  .notes { margin-top: 30px; padding: 15px; background: #f8fafc; border-left: 3px solid #cbd5e1; }\n</style>\n</head>\n<body>\n  <div class=\"header\">\n    <div><h1>${esc(config.companyName)}</h1><h2>INVOICE</h2></div>\n    ${logoHtml}\n  </div>\n  <p><strong>Invoice #:</strong> ${esc(orderNumber)}</p>\n  <p><strong>Date:</strong> ${new Date().toISOString().slice(0, 10)}</p>\n  ${dueHtml}\n  <p><strong>Bill To:</strong> ${esc(customerName)}</p>\n  ${addressHtml}\n  <p><strong>Email:</strong> ${esc(customerEmail)}</p>\n  <table>\n    <tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr>\n    ${itemsHtml}\n  </table>\n  <p class=\"right\">Subtotal: ${config.currency}${subtotal.toFixed(2)}</p>\n  ${taxHtml}\n  <p class=\"right bold\">Total: ${config.currency}${total.toFixed(2)}</p>\n  ${notesHtml}\n</body>\n</html>`;\n\nreturn [{\n  json: {\n    html,\n    orderNumber,\n    customerName,\n    customerEmail,\n    invoiceFilename: orderNumber + '.pdf',\n    emailSubject: (row.emailSubjectPrefix || 'Your invoice') + ' — ' + orderNumber\n  }\n}];"
+      }
+    },
+    {
+      "id": "aa000001-0000-0000-0000-000000000005",
+      "name": "Convert invoice to PDF",
+      "type": "@acrewity/n8n-nodes-acrewity.acrewity",
+      "typeVersion": 1,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "resource": "html_to_pdf",
+        "html": "={{ $json.html }}"
+      },
+      "retryOnFail": true
+    },
+    {
+      "id": "aa000001-0000-0000-0000-000000000006",
+      "name": "Convert PDF to file",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "result.data.content",
+        "binaryPropertyName": "data",
+        "options": {
+          "fileName": "={{ $('Build invoice HTML').item.json.invoiceFilename }}",
+          "mimeType": "application/pdf"
+        }
+      }
+    },
+    {
+      "id": "aa000001-0000-0000-0000-000000000007",
+      "name": "Email invoice to customer",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1100,
+        0
+      ],
+      "webhookId": "aa000001-mail-0000-0000-000000000007",
+      "parameters": {
+        "sendTo": "={{ $('Build invoice HTML').item.json.customerEmail }}",
+        "subject": "={{ $('Build invoice HTML').item.json.emailSubject }}",
+        "message": "=Hi {{ $('Build invoice HTML').item.json.customerName }},\n\nThank you for your order. Your invoice {{ $('Build invoice HTML').item.json.orderNumber }} is attached as a PDF.\n\nIf you have any questions, just reply to this email.\n\nBest regards",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "data"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "aa000001-0000-0000-0000-000000000008",
+      "name": "Archive invoice in Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1100,
+        180
+      ],
+      "parameters": {
+        "name": "={{ $('Build invoice HTML').item.json.invoiceFilename }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive",
+          "cachedResultName": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "aa000001-0000-0000-0000-000000000009",
+      "name": "Mark order as invoiced",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1320,
+        180
+      ],
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Order Number": "={{ $('Build invoice HTML').item.json.orderNumber }}",
+            "Status": "Invoiced"
+          },
+          "matchingColumns": [
+            "Order Number"
+          ],
+          "schema": []
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "aa000001-0000-0000-0000-000000000010",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -180
+      ],
+      "parameters": {
+        "width": 400,
+        "height": 120,
+        "content": "**1. Trigger and configuration**\nFires on every new row in your Orders sheet. Edit the Workflow configuration node to set your company name, logo, and tax rate."
+      }
+    },
+    {
+      "id": "aa000001-0000-0000-0000-000000000011",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        420,
+        -180
+      ],
+      "parameters": {
+        "width": 400,
+        "height": 120,
+        "content": "**2. Build and convert**\nBuilds a styled HTML invoice from the order row, then the Acrewity node renders it to PDF and it is converted to a binary file."
+      }
+    },
+    {
+      "id": "aa000001-0000-0000-0000-000000000012",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        -180
+      ],
+      "parameters": {
+        "width": 460,
+        "height": 120,
+        "content": "**3. Deliver, archive, and record**\nThe PDF goes to the customer via Gmail, a copy lands in your Drive folder, and the sheet row gets Status = Invoiced so nothing is billed twice."
+      }
+    }
+  ],
+  "connections": {
+    "New order row added": {
+      "main": [
+        [
+          {
+            "node": "Workflow configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow configuration": {
+      "main": [
+        [
+          {
+            "node": "Build invoice HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build invoice HTML": {
+      "main": [
+        [
+          {
+            "node": "Convert invoice to PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert invoice to PDF": {
+      "main": [
+        [
+          {
+            "node": "Convert PDF to file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert PDF to file": {
+      "main": [
+        [
+          {
+            "node": "Email invoice to customer",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Archive invoice in Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Archive invoice in Drive": {
+      "main": [
+        [
+          {
+            "node": "Mark order as invoiced",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}
