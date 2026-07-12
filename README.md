@@ -18,6 +18,7 @@ Complete automations you can run as-is: a real trigger, the work, and delivery o
 | [Sheets Invoice Pipeline](workflows/sheets-invoice-pipeline/) | Turns every new order row into a PDF invoice — emailed to the customer, archived in Drive, sheet marked Invoiced | Google Sheets, Gmail, Google Drive |
 | [Website Change Monitor](workflows/website-change-monitor/) | Watches a Sheets watchlist of URLs daily and emails one digest of what changed | Schedule, Google Sheets, Gmail |
 | [Quote PDF Follow-up](workflows/quote-pdf-follow-up/) | Sends a quote PDF the moment a prospect submits the built-in form, then follows up automatically after 3 days | n8n Form, Gmail, Wait |
+| [Webhook Document Generator](workflows/webhook-document-generator/) | Turns order JSON from any system into an invoice, quote, estimate, receipt, or proforma PDF, emailed straight to the customer | Webhook, Gmail |
 | [HTML Invoice to PDF Email](workflows/html-invoice-to-pdf-email/) | Converts an HTML invoice to PDF and sends it to the customer as an email attachment | `html_to_pdf`, SMTP |
 | [Acrewity AI Agent](workflows/acrewity-ai-agent/) | Natural-language interface to all 22 services — the AI picks the right tool automatically | AI Agent, Claude, all services |
 
