@@ -54,12 +54,6 @@
           "cachedResultName": "Claude Sonnet 4.6"
         },
         "options": {}
-      },
-      "credentials": {
-        "anthropicApi": {
-          "id": "YOUR_ANTHROPIC_CREDENTIAL_ID",
-          "name": "YOUR_ANTHROPIC_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -89,12 +83,6 @@
       "parameters": {
         "resource": "uuid_generator",
         "operation": "generate_uuid"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -110,12 +98,6 @@
         "resource": "qr_code_generator",
         "operation": "generate",
         "text": "={{ $fromAI('text', 'Text or URL to encode in the QR code', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -131,12 +113,6 @@
         "resource": "barcode_generator",
         "operation": "generate_barcode",
         "text": "={{ $fromAI('text', 'Text or numbers to encode in the barcode', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -153,12 +129,6 @@
         "operation": "match_pattern",
         "text": "={{ $fromAI('text', 'The text to search in', 'string') }}",
         "pattern": "={{ $fromAI('pattern', 'The regex pattern', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -175,12 +145,6 @@
         "operation": "compare_text",
         "text1": "={{ $fromAI('text1', 'Original text', 'string') }}",
         "text2": "={{ $fromAI('text2', 'Modified text', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -196,12 +160,6 @@
         "resource": "url_encoder_decoder",
         "operation": "encode",
         "text": "={{ $fromAI('text', 'Text to URL-encode', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -217,12 +175,6 @@
         "resource": "url_encoder_decoder",
         "operation": "decode",
         "text": "={{ $fromAI('text', 'URL-encoded text to decode', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -240,12 +192,6 @@
         "datetime": "={{ $fromAI('datetime', 'Datetime to convert e.g. 2025-10-23T12:00:00', 'string') }}",
         "fromTimezone": "={{ $fromAI('fromTimezone', 'Source timezone e.g. UTC', 'string') }}",
         "toTimezone": "={{ $fromAI('toTimezone', 'Target timezone e.g. EST', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -262,12 +208,6 @@
         "operation": "generate_table",
         "headers": "={{ $fromAI('headers', 'JSON array of column headers', 'string') }}",
         "rows": "={{ $fromAI('rows', 'JSON array of row arrays', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -284,12 +224,6 @@
         "operation": "validate_json",
         "data": "={{ $fromAI('data', 'JSON data to validate', 'string') }}",
         "schema": "={{ $fromAI('schema', 'JSON Schema to validate against', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -305,12 +239,6 @@
         "resource": "url_to_markdown",
         "operation": "url_to_markdown",
         "url": "={{ $fromAI('url', 'URL of the page to fetch', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -326,12 +254,6 @@
         "resource": "html_to_pdf",
         "operation": "convert",
         "html": "={{ $fromAI('html', 'HTML document to convert to PDF', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -347,12 +269,6 @@
         "resource": "html_to_markdown",
         "operation": "convert",
         "content": "={{ $fromAI('content', 'HTML content to convert', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -368,12 +284,6 @@
         "resource": "markdown_to_html",
         "operation": "convert",
         "content": "={{ $fromAI('content', 'Markdown content to convert', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -389,12 +299,6 @@
         "resource": "markdown_to_html",
         "operation": "fragment",
         "content": "={{ $fromAI('content', 'Markdown content to convert', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -411,12 +315,6 @@
         "operation": "convert_image",
         "imageUrl": "={{ $fromAI('imageUrl', 'URL of the image to convert', 'string') }}",
         "format": "={{ $fromAI('format', 'Output format: jpeg png webp', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -432,12 +330,6 @@
         "resource": "json_to_excel",
         "operation": "create_excel",
         "data": "={{ $fromAI('data', 'JSON array of objects to convert', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -453,12 +345,6 @@
         "resource": "json_to_excel",
         "operation": "create_multi_sheet",
         "sheets": "={{ $fromAI('sheets', 'JSON object with sheet names as keys and row arrays as values', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -474,12 +360,6 @@
         "resource": "sitemap_generator",
         "operation": "extract_links",
         "url": "={{ $fromAI('url', 'URL of the page to extract links from', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -495,12 +375,6 @@
         "resource": "sitemap_generator",
         "operation": "generate_sitemap",
         "urls": "={{ $fromAI('urls', 'JSON array of URLs to include in the sitemap', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -516,12 +390,6 @@
         "resource": "pdf_to_markdown",
         "operation": "convert",
         "base64_data": "={{ $fromAI('base64_data', 'Base64-encoded PDF file', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -537,12 +405,6 @@
         "resource": "pdf_to_html",
         "operation": "convert",
         "base64_data": "={{ $fromAI('base64_data', 'Base64-encoded PDF file', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -558,12 +420,6 @@
         "resource": "pdf_merge",
         "operation": "merge",
         "files": "={{ $fromAI('files', 'JSON array of Base64-encoded PDF files to merge', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -579,12 +435,6 @@
         "resource": "excel_to_json",
         "operation": "read_excel",
         "file": "={{ $fromAI('file', 'Base64-encoded Excel file', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     },
     {
@@ -606,12 +456,6 @@
         "smtp_user": "={{ $fromAI('smtp_user', 'SMTP username', 'string') }}",
         "smtp_pass": "={{ $fromAI('smtp_pass', 'SMTP password', 'string') }}",
         "from": "={{ $fromAI('from', 'Sender email', 'string') }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "YOUR_ACREWITY_CREDENTIAL_NAME"
-        }
       }
     }
   ],

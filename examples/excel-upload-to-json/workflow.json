@@ -47,12 +47,6 @@
         "resource": "excel_to_json",
         "operation": "read_excel",
         "file": "={{ $json.file_base64 }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "Acrewity account"
-        }
       }
     },
     {

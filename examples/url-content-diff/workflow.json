@@ -31,12 +31,6 @@
         "resource": "url_to_markdown",
         "operation": "url_to_markdown",
         "url": "={{ $json.body.url1 }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "Acrewity account"
-        }
       }
     },
     {
@@ -52,12 +46,6 @@
         "resource": "url_to_markdown",
         "operation": "url_to_markdown",
         "url": "={{ $('Webhook').first().json.body.url2 }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "Acrewity account"
-        }
       }
     },
     {
@@ -101,12 +89,6 @@
         "operation": "diff",
         "text1": "={{ $json.text1 }}",
         "text2": "={{ $json.text2 }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "Acrewity account"
-        }
       }
     },
     {

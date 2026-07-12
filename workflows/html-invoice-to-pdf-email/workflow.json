@@ -31,12 +31,6 @@
         "resource": "html_to_pdf",
         "operation": "convert",
         "html": "={{ $json.body.html }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "Acrewity account"
-        }
       }
     },
     {
@@ -70,12 +64,6 @@
         "message": "={{ $json.message }}",
         "attachments": "attachment",
         "options": {}
-      },
-      "credentials": {
-        "smtp": {
-          "id": "YOUR_SMTP_CREDENTIAL_ID",
-          "name": "SMTP account"
-        }
       },
       "webhookId": "ee2e97f6-a905-4f86-9d0c-b6f7b6eec669"
     },
@@ -144,4 +132,3 @@
     "executionOrder": "v1"
   }
 }
-

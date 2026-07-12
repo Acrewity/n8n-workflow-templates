@@ -46,13 +46,7 @@
       "position": [
         440,
         300
-      ],
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "Acrewity account"
-        }
-      }
+      ]
     },
     {
       "parameters": {

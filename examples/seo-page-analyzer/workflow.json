@@ -31,12 +31,6 @@
         "resource": "url_to_markdown",
         "operation": "url_to_markdown",
         "url": "={{ $json.body.url }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "Acrewity account"
-        }
       }
     },
     {
@@ -73,12 +67,6 @@
           "cachedResultName": "Claude 3.7 Sonnet"
         },
         "options": {}
-      },
-      "credentials": {
-        "anthropicApi": {
-          "id": "YOUR_ANTHROPIC_CREDENTIAL_ID",
-          "name": "Anthropic account"
-        }
       }
     },
     {

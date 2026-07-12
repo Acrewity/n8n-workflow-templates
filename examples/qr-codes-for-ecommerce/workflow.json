@@ -47,12 +47,6 @@
         "text": "={{ $json.url || $json.sku }}",
         "size": 300,
         "format": "png"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "Acrewity account"
-        }
       }
     },
     {

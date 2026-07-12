@@ -32,12 +32,6 @@
         "operation": "validate_json",
         "schema": "={{ JSON.stringify($json.body.schema) }}",
         "data": "={{ JSON.stringify($json.body.data) }}"
-      },
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "Acrewity account"
-        }
       }
     },
     {
@@ -82,15 +76,16 @@
         180
       ],
       "parameters": {
-        "mode": "manual",
-        "fields": {
-          "values": [
+        "assignments": {
+          "assignments": [
             {
+              "id": "a1",
               "name": "status",
               "type": "string",
               "value": "ok"
             },
             {
+              "id": "a2",
               "name": "message",
               "type": "string",
               "value": "Payload is valid. Add your processing logic here."
@@ -111,8 +106,10 @@
       ],
       "parameters": {
         "respondWith": "json",
-        "responseCode": 422,
-        "responseBody": "={{ JSON.stringify({ success: false, errors: $json.result.data.errors }) }}"
+        "responseBody": "={{ JSON.stringify({ success: false, errors: $json.result.data.errors }) }}",
+        "options": {
+          "responseCode": 422
+        }
       }
     },
     {

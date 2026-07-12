@@ -31,13 +31,7 @@
       "position": [
         220,
         300
-      ],
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "Acrewity account"
-        }
-      }
+      ]
     },
     {
       "parameters": {
@@ -53,13 +47,7 @@
       "position": [
         440,
         200
-      ],
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "Acrewity account"
-        }
-      }
+      ]
     },
     {
       "parameters": {
@@ -76,13 +64,7 @@
       "position": [
         440,
         400
-      ],
-      "credentials": {
-        "acrewityApi": {
-          "id": "YOUR_ACREWITY_CREDENTIAL_ID",
-          "name": "Acrewity account"
-        }
-      }
+      ]
     },
     {
       "parameters": {
