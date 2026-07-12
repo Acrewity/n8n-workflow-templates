@@ -22,8 +22,15 @@ Small businesses and freelancers who track orders in a Google Sheet and still as
 
 ## How to set up
 
-1. Create an Orders sheet with columns: `Order Number, Customer Name, Customer Email, Customer Address, Items, Due Date, Notes, Status`
-   - `Items` holds a JSON array, e.g. `[{"name":"Widget","quantity":2,"price":9.99}]`
+1. Create an Orders sheet. Paste this line into cell A1 — it fills the whole header row at once:
+
+   ```
+   Order Number	Customer Name	Customer Email	Customer Address	Items	Due Date	Notes	Status
+   ```
+
+   - `Items` holds a JSON array, e.g. `[{"name":"Widget","quantity":2,"price":9.99}]` — this is the only column with a special format
+   - `Due Date`, `Notes`, and `Customer Address` may be empty; `Status` starts blank and the workflow fills it
+   - If a row runs with the header missing, the workflow stops with an error telling you exactly which columns to add
 2. Import `workflow.json` (Workflows > Import from file)
 3. Add credentials: Acrewity on "Convert invoice to PDF", Gmail on the email node, Google Sheets on the trigger and "Mark order as invoiced", Google Drive on the archive node
 4. Pick your spreadsheet in the trigger and both Sheets nodes, and your archive folder in the Drive node
