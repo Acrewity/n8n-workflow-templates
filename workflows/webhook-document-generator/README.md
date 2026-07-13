@@ -13,6 +13,7 @@ Anyone whose system already has order data but no billing-document infrastructur
 3. The Acrewity community node renders it to PDF
 4. Gmail delivers the PDF to the customer within seconds
 5. The caller receives a JSON confirmation with the document number
+6. Bad payloads (missing email, broken or missing items) receive a clear HTTP 400 with the reason — never a silent failure
 
 ## Requirements
 
