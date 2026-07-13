@@ -13,7 +13,7 @@
       "parameters": {
         "color": 3,
         "width": 460,
-        "height": 990,
+        "height": 1100,
         "content": "## Generate and email PDF invoices from new Google Sheets orders\n\n### Who's it for\nSmall businesses and freelancers who track orders in a Google Sheet and want every new order to produce a professional PDF invoice that is emailed to the customer and archived in Google Drive, with the sheet updated automatically.\n\n### How it works\n1. Watches your Orders sheet for new rows\n2. Builds a styled HTML invoice from the row data\n3. Converts it to PDF with the Acrewity community node\n4. Emails the PDF to the customer via Gmail\n5. Archives a copy in Google Drive\n6. Writes Status = Invoiced back to the row\n7. Rows with bad data (broken Items JSON, missing email) do NOT stop the batch — their Status column gets the error message instead\n\n### How to set up\n1. Install the verified community node `@acrewity/n8n-nodes-acrewity` and add your Acrewity API credential (free key at acrewity.com, 100 free credits/month)\n2. Connect Google Sheets, Gmail, and Google Drive credentials\n3. Create an Orders sheet. Paste this line into cell A1 — it fills the whole header row:\n\nOrder Number\tCustomer Name\tCustomer Email\tCustomer Address\tItems\tDue Date\tNotes\tStatus\n4. Items column holds a JSON array, e.g. [{\"name\":\"Widget\",\"quantity\":2,\"price\":9.99}]\n5. Pick your spreadsheet in the trigger, Drive folder in the archive node, and edit the Workflow configuration node (company name, logo, tax rate)\n\n### How to customize\nAdjust the invoice look in Build invoice HTML, change the email copy in the Gmail node, or add Slack notifications after the archive step."
       }
     },
@@ -237,11 +237,11 @@
       "typeVersion": 1,
       "position": [
         -40,
-        -180
+        -230
       ],
       "parameters": {
         "width": 400,
-        "height": 120,
+        "height": 200,
         "content": "**1. Trigger and configuration**\nFires on every new row in your Orders sheet. Edit the Workflow configuration node to set your company name, logo, and tax rate."
       }
     },
@@ -252,11 +252,11 @@
       "typeVersion": 1,
       "position": [
         420,
-        -180
+        -230
       ],
       "parameters": {
         "width": 400,
-        "height": 120,
+        "height": 200,
         "content": "**2. Build and convert**\nBuilds a styled HTML invoice from the order row, then the Acrewity node renders it to PDF and it is converted to a binary file."
       }
     },
@@ -267,11 +267,11 @@
       "typeVersion": 1,
       "position": [
         1080,
-        -180
+        -230
       ],
       "parameters": {
         "width": 460,
-        "height": 120,
+        "height": 200,
         "content": "**3. Deliver, archive, and record**\nThe PDF goes to the customer via Gmail, a copy lands in your Drive folder, and the sheet row gets Status = Invoiced so nothing is billed twice."
       }
     },
