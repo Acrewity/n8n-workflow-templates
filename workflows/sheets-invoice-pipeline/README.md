@@ -13,6 +13,7 @@ Small businesses and freelancers who track orders in a Google Sheet and still as
 3. Converts it to PDF with the Acrewity community node
 4. Emails the PDF to the customer via Gmail and archives a copy in Google Drive
 5. Writes Status = Invoiced back to the row so nothing is billed twice
+6. Rows with bad data (broken Items JSON, a missing item name, no email address) never stop the batch — the other rows still get invoiced, and the bad row's Status column receives the error message so you can fix it in the sheet
 
 ## Requirements
 
