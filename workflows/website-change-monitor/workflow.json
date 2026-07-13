@@ -13,7 +13,7 @@
       "parameters": {
         "color": 3,
         "width": 460,
-        "height": 1000,
+        "height": 1140,
         "content": "## Monitor website changes from a Google Sheets watchlist and email a daily summary\n\n### Who's it for\nAnyone who needs to know when pages change: competitor pricing pages, supplier terms, documentation, job boards, or client sites — without checking them by hand.\n\n### How it works\n1. Runs every morning on a schedule\n2. Reads your watchlist from a Google Sheet (URL, Label, LastHash columns)\n3. Fetches each page as clean markdown with the Acrewity community node (JavaScript-rendered pages work too)\n4. Compares a content hash against the stored one to detect changes\n5. Emails you one digest listing every changed page via Gmail\n6. Writes the new hashes back to the sheet so tomorrow compares against today\n\n### How to set up\n1. Install the verified community node `@acrewity/n8n-nodes-acrewity` and add your Acrewity API credential (free key at acrewity.com, 100 free credits/month)\n2. Connect Google Sheets and Gmail credentials\n3. Create a sheet with columns: URL, Label, LastHash (leave LastHash empty — the workflow fills it)\n4. Set your notification address in the Workflow configuration node\n\n### How to customize\nChange the schedule time in the trigger, or swap the Gmail digest for Slack or Telegram. The first run stores hashes without reporting changes, so alerts start from the second run."
       }
     },
@@ -193,11 +193,11 @@
       "typeVersion": 1,
       "position": [
         -40,
-        -230
+        -270
       ],
       "parameters": {
         "width": 420,
-        "height": 200,
+        "height": 240,
         "content": "**1. Schedule and watchlist**\nRuns daily at 8 AM. The pages to watch live in a Google Sheet so you can add or remove URLs without touching the workflow."
       }
     },
@@ -208,11 +208,11 @@
       "typeVersion": 1,
       "position": [
         640,
-        -230
+        -270
       ],
       "parameters": {
         "width": 400,
-        "height": 200,
+        "height": 240,
         "content": "**2. Fetch and compare**\nEach URL is fetched as clean markdown and hashed. A changed hash means changed content. Failed fetches are skipped safely."
       }
     },
@@ -227,7 +227,7 @@
       ],
       "parameters": {
         "width": 400,
-        "height": 200,
+        "height": 240,
         "content": "**3. Digest and record**\nOne email lists everything that changed. New hashes are written back to the sheet so the next run compares against today's content."
       }
     }

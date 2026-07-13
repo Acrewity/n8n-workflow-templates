@@ -13,7 +13,7 @@
       "parameters": {
         "color": 3,
         "width": 460,
-        "height": 1180,
+        "height": 1340,
         "content": "## Generate and email invoices, quotes, and receipts from webhook JSON\n\n### Who is it for\nAnyone with a system that already knows about orders — an online store, CRM, booking tool, or internal app — who wants professional billing documents sent to customers without building PDF infrastructure.\n\n### How it works\n1. Your system POSTs order JSON to the webhook (documentType picks invoice, quote, estimate, receipt, or proforma)\n2. The workflow builds a styled document with line items, tax, and totals\n3. The Acrewity community node renders it to PDF\n4. Gmail delivers the PDF to the customer within seconds\n5. Your system receives a JSON confirmation with the document number\n6. Bad payloads (missing email, broken items) get a clear HTTP 400 with the reason instead of a silent failure\n\n### How to set up\n1. Install the verified community node @acrewity/n8n-nodes-acrewity and add your Acrewity API credential (free key at acrewity.com, 100 free credits/month)\n2. Connect your Gmail credential to the email node\n3. Edit the Workflow configuration node: company name, logo, default tax rate, currency\n4. Activate and POST to the webhook URL\n\n### Sample payload\n{\n  \"documentType\": \"invoice\",\n  \"documentNumber\": \"INV-2026-001\",\n  \"customerName\": \"John Smith\",\n  \"customerEmail\": \"john@example.com\",\n  \"dueDate\": \"2026-08-15\",\n  \"taxRate\": 0.13,\n  \"items\": [{\"name\": \"Widget\", \"quantity\": 2, \"price\": 9.99}]\n}\n\n### How to customize\nDocument layout lives in Build document HTML (marked CHANGE ME), email copy in the Gmail node. Add a Drive or Slack node after Gmail to archive or notify."
       }
     },
@@ -170,11 +170,11 @@
       "typeVersion": 1,
       "position": [
         -40,
-        -230
+        -270
       ],
       "parameters": {
         "width": 420,
-        "height": 200,
+        "height": 240,
         "content": "**1. Intake and configuration**\nYour store, CRM, or app POSTs order JSON here. Company details and defaults live in the Workflow configuration node."
       }
     },
@@ -185,11 +185,11 @@
       "typeVersion": 1,
       "position": [
         420,
-        -230
+        -270
       ],
       "parameters": {
         "width": 420,
-        "height": 200,
+        "height": 240,
         "content": "**2. Build and convert**\nOne code node handles all five document types (invoice, quote, estimate, receipt, proforma). The Acrewity node renders the PDF."
       }
     },
@@ -200,11 +200,11 @@
       "typeVersion": 1,
       "position": [
         1080,
-        -230
+        -270
       ],
       "parameters": {
         "width": 440,
-        "height": 200,
+        "height": 240,
         "content": "**3. Deliver and confirm**\nGmail sends the PDF to the customer; the caller gets a JSON confirmation with the document number instead of a raw file."
       }
     },

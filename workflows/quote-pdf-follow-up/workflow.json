@@ -13,7 +13,7 @@
       "parameters": {
         "color": 3,
         "width": 460,
-        "height": 1040,
+        "height": 1200,
         "content": "## Send quote PDFs from form submissions and follow up automatically\n\n### Who's it for\nFreelancers, agencies, and service businesses that receive quote requests and lose deals by replying late or forgetting to follow up.\n\n### How it works\n1. A prospect fills out the built-in n8n form (no external form tool needed)\n2. The workflow builds a professional quote as a PDF using the Acrewity community node\n3. The quote is emailed to the prospect via Gmail within seconds of the request\n4. After a configurable delay (default 3 days) a polite follow-up email is sent automatically\n\n### How to set up\n1. Install the verified community node `@acrewity/n8n-nodes-acrewity` and add your Acrewity API credential (free key at acrewity.com, 100 free credits/month)\n2. Connect your Gmail credential to both email nodes\n3. Edit the Workflow configuration node: company name, sender name, quote validity, follow-up delay\n4. Activate the workflow and share the form URL from the trigger node\n\n### Requirements\nAcrewity API key (free tier works), Gmail account.\n\n### How to customize\nEdit the form fields in the trigger, the quote look in Build quote HTML, and both email texts in the Gmail nodes. Add a CRM node after the follow-up to log the lead, or an If node to skip the follow-up when the prospect already replied."
       }
     },
@@ -227,11 +227,11 @@
       "typeVersion": 1,
       "position": [
         -40,
-        -230
+        -270
       ],
       "parameters": {
         "width": 400,
-        "height": 200,
+        "height": 240,
         "content": "**1. Intake**\nThe built-in n8n form collects the request. Share its URL anywhere — no external form tool needed. Configuration lives in the Set node."
       }
     },
@@ -242,11 +242,11 @@
       "typeVersion": 1,
       "position": [
         420,
-        -230
+        -270
       ],
       "parameters": {
         "width": 400,
-        "height": 200,
+        "height": 240,
         "content": "**2. Quote generation**\nA styled quote is built from the submission and rendered to PDF by the Acrewity node, then emailed to the prospect within seconds."
       }
     },
@@ -257,11 +257,11 @@
       "typeVersion": 1,
       "position": [
         1300,
-        -230
+        -270
       ],
       "parameters": {
         "width": 420,
-        "height": 200,
+        "height": 240,
         "content": "**3. Automatic follow-up**\nAfter the configured delay the workflow resumes and sends a polite follow-up referencing the quote number. Adjust the delay in the configuration node."
       }
     }
