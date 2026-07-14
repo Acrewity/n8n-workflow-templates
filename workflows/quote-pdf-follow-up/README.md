@@ -22,14 +22,14 @@ Freelancers, agencies, and service businesses that receive quote requests and lo
 ## How to set up
 
 1. Import `workflow.json` (Workflows > Import from file)
-2. Add your Acrewity API credential to the "Convert quote to PDF" node
+2. Add your Acrewity API credential to the "Generate PDF from Quote" node
 3. Add your Gmail credential to both email nodes
-4. Edit the "Workflow configuration" node: company name, sender name, quote validity, follow-up delay
+4. Edit the "Set Configuration Parameters" node: company name, sender name, quote validity, follow-up delay
 5. Activate the workflow and share the form URL shown on the trigger node
 
 ## How to customize
 
 - Edit the form fields in the trigger node
-- Change the quote layout in "Build quote HTML"
+- Change the quote layout in "Create Quote HTML"
 - Adjust both email texts in the Gmail nodes
 - Add an If node before the follow-up to skip prospects who already replied, or a CRM node to log every lead
