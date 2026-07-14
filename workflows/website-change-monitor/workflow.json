@@ -8,7 +8,7 @@
       "typeVersion": 1,
       "position": [
         -560,
-        -240
+        -380
       ],
       "parameters": {
         "color": 3,
@@ -193,7 +193,7 @@
       "typeVersion": 1,
       "position": [
         -40,
-        -270
+        -410
       ],
       "parameters": {
         "width": 420,
@@ -208,7 +208,7 @@
       "typeVersion": 1,
       "position": [
         640,
-        -270
+        -410
       ],
       "parameters": {
         "width": 400,
@@ -223,7 +223,7 @@
       "typeVersion": 1,
       "position": [
         1300,
-        -280
+        -420
       ],
       "parameters": {
         "width": 400,
